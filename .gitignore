@@ -6,6 +6,7 @@ target/
 mvnw
 mvnw.cmd
 .DS_Store
+detekt.html
 
 ### STS ###
 .apt_generated

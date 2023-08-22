@@ -6,7 +6,6 @@ import com.arsiu.eduhub.model.Chapter
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
 
-
 @Mapper(
     componentModel = "spring",
     uses = [AssignmentMapper::class, LessonMapper::class],
