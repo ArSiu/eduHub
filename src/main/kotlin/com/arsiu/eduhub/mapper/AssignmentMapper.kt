@@ -20,4 +20,5 @@ interface AssignmentMapper {
     fun toDtoResponse(assignment: Assignment): AssignmentDtoResponse
 
     fun toDtoResponseList(assignments: List<Assignment>): List<AssignmentDtoResponse>
+
 }

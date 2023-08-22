@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-
 @RestController
 @RequestMapping("/api/assignment")
 class AssignmentController(
@@ -31,7 +30,7 @@ class AssignmentController(
         )
 
     @GetMapping("/{id}")
-    fun getAssignmentById(@PathVariable(value = "id") id: Long): ResponseEntity<AssignmentDtoResponse> =
+    fun getAssignmentById(@PathVariable id: Long): ResponseEntity<AssignmentDtoResponse> =
         ResponseEntity(
             assignmentMapper.toDtoResponse(assignmentService.findById(id)),
             HttpStatus.OK
@@ -39,19 +38,18 @@ class AssignmentController(
 
     @PutMapping("/{id}")
     fun updateAssignmentById(
-        @PathVariable(value = "id") id: Long,
+        @PathVariable id: Long,
         @Valid @RequestBody assignment: AssignmentDtoRequest
-    ): ResponseEntity<Void> {
+    ) {
         assignmentService.update(
             id,
             assignmentMapper.toEntity(assignment)
         )
-        return ResponseEntity(HttpStatus.OK)
     }
 
     @DeleteMapping("/{id}")
-    fun deleteAssignmentById(@PathVariable(value = "id") id: Long): ResponseEntity<Void> {
+    fun deleteAssignmentById(@PathVariable id: Long) {
         assignmentService.delete(id)
-        return ResponseEntity(HttpStatus.OK)
     }
+
 }

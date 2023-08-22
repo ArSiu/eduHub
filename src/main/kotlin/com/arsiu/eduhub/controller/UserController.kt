@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-
 @RestController
 @RequestMapping("/api/user")
 class UserController(private val userService: UserService, private val userMapper: UserMapper) {
@@ -36,7 +35,7 @@ class UserController(private val userService: UserService, private val userMappe
     }
 
     @GetMapping("/{id}")
-    fun getUserById(@PathVariable(value = "id") id: Long): ResponseEntity<UserDtoResponse> =
+    fun getUserById(@PathVariable id: Long): ResponseEntity<UserDtoResponse> =
         ResponseEntity(
             userMapper.toDtoOut(userService.findById(id)),
             HttpStatus.OK
@@ -44,19 +43,18 @@ class UserController(private val userService: UserService, private val userMappe
 
     @PutMapping("/{id}")
     fun updateUserById(
-        @PathVariable(value = "id") id: Long,
+        @PathVariable id: Long,
         @Valid @RequestBody user: UserDtoRequest
-    ): ResponseEntity<Void> {
+    ) {
         userService.update(
             id,
             userMapper.toEntity(user)
         )
-        return ResponseEntity(HttpStatus.OK)
     }
 
     @DeleteMapping("/{id}")
-    fun deletePostById(@PathVariable(value = "id") id: Long): ResponseEntity<Void> {
+    fun deletePostById(@PathVariable id: Long) {
         userService.delete(id)
-        return ResponseEntity(HttpStatus.OK)
     }
+
 }

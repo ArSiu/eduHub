@@ -46,4 +46,5 @@ class CourseService @Autowired constructor(
     }
 
     override fun delete(id: Long) = courseRepository.deleteById(id)
+
 }

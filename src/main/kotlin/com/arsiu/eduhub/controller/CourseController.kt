@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-
 @RestController
 @RequestMapping("/api/course")
 class CourseController(
     private val courseService: CourseService,
     private val courseMapper: CourseMapper
 ) {
+
     @GetMapping
     fun getAllCourses(): ResponseEntity<List<CourseDtoResponse>> =
         ResponseEntity(
@@ -41,7 +41,7 @@ class CourseController(
     }
 
     @GetMapping("/{id}")
-    fun getCourseById(@PathVariable(value = "id") id: Long): ResponseEntity<CourseDtoResponse> =
+    fun getCourseById(@PathVariable id: Long): ResponseEntity<CourseDtoResponse> =
         ResponseEntity(
             courseMapper.toDtoResponse(courseService.findById(id)),
             HttpStatus.OK
@@ -49,19 +49,18 @@ class CourseController(
 
     @PutMapping("/{id}")
     fun updateCourseById(
-        @PathVariable(value = "id") id: Long,
+        @PathVariable id: Long,
         @Valid @RequestBody course: CourseDtoRequest
-    ): ResponseEntity<Void> {
+    ) {
         courseService.update(
             id,
             courseMapper.toEntity(course)
         )
-        return ResponseEntity(HttpStatus.OK)
     }
 
     @DeleteMapping("/{id}")
-    fun deleteCourseById(@PathVariable(value = "id") id: Long): ResponseEntity<Void> {
+    fun deleteCourseById(@PathVariable id: Long) {
         courseService.delete(id)
-        return ResponseEntity(HttpStatus.OK)
     }
+
 }

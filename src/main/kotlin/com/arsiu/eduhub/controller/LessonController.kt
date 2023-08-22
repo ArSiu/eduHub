@@ -30,7 +30,7 @@ class LessonController(
         )
 
     @GetMapping("/{id}")
-    fun getLessonById(@PathVariable(value = "id") id: Long): ResponseEntity<LessonDtoResponse> =
+    fun getLessonById(@PathVariable id: Long): ResponseEntity<LessonDtoResponse> =
         ResponseEntity(
             lessonMapper.toDtoResponse(lessonService.findById(id)),
             HttpStatus.OK
@@ -38,19 +38,18 @@ class LessonController(
 
     @PutMapping("/{id}")
     fun updateLessonById(
-        @PathVariable(value = "id") id: Long,
+        @PathVariable id: Long,
         @Valid @RequestBody lesson: LessonDtoRequest
-    ): ResponseEntity<Void> {
+    ) {
         lessonService.update(
             id,
             lessonMapper.toEntity(lesson)
         )
-        return ResponseEntity(HttpStatus.OK)
     }
 
     @DeleteMapping("/{id}")
-    fun deleteLessonById(@PathVariable(value = "id") id: Long): ResponseEntity<Void> {
+    fun deleteLessonById(@PathVariable id: Long) {
         lessonService.delete(id)
-        return ResponseEntity(HttpStatus.OK)
     }
+
 }

@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-
 @RestController
 @RequestMapping("/api/chapter")
 class ChapterController(
@@ -31,7 +30,7 @@ class ChapterController(
         )
 
     @GetMapping("/{id}")
-    fun getChapterById(@PathVariable(value = "id") id: Long): ResponseEntity<ChapterDtoResponse> =
+    fun getChapterById(@PathVariable id: Long): ResponseEntity<ChapterDtoResponse> =
         ResponseEntity(
             chapterMapper.toDtoResponse(chapterService.findById(id)),
             HttpStatus.OK
@@ -39,19 +38,18 @@ class ChapterController(
 
     @PutMapping("/{id}")
     fun updateChapterById(
-        @PathVariable(value = "id") id: Long,
+        @PathVariable id: Long,
         @Valid @RequestBody chapter: ChapterDtoRequest
-    ): ResponseEntity<Void> {
+    ) {
         chapterService.update(
             id,
             chapterMapper.toEntity(chapter)
         )
-        return ResponseEntity(HttpStatus.OK)
     }
 
     @DeleteMapping("/{id}")
-    fun deleteChapterById(@PathVariable(value = "id") id: Long): ResponseEntity<Void> {
+    fun deleteChapterById(@PathVariable id: Long) {
         chapterService.delete(id)
-        return ResponseEntity(HttpStatus.OK)
     }
+
 }

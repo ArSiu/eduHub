@@ -22,4 +22,5 @@ interface UserMapper {
     fun toDtoOut(user: User): UserDtoResponse
 
     fun toDtoOutList(users: List<User>): List<UserDtoResponse>
+
 }

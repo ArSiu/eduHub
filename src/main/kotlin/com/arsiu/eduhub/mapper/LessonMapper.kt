@@ -22,4 +22,5 @@ interface LessonMapper {
     fun toDtoResponse(lesson: Lesson): LessonDtoResponse
 
     fun toDtoResponseList(lessons: List<Lesson>): List<LessonDtoResponse>
+
 }

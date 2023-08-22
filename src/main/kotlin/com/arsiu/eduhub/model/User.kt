@@ -15,7 +15,6 @@ import jakarta.persistence.ManyToMany
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 
-
 @Entity
 @Table(name = "edu_user")
 data class User(
