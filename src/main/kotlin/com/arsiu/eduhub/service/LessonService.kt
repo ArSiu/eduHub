@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service
 @Service
 class LessonService @Autowired constructor(
     val lessonRepository: LessonRepository,
-    @Lazy val chapterService: ChapterService,
-    val assignmentService: AssignmentService
+    val assignmentService: AssignmentService,
+    @Lazy val chapterService: ChapterService
 ) : LessonServiceInterface {
     override fun findAll(): List<Lesson> = lessonRepository.findAll().toList()
 

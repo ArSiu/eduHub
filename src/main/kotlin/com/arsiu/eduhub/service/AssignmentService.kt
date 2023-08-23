@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 @Service
 class AssignmentService @Autowired constructor(
     val assignmentRepository: AssignmentRepository,
-    @Lazy val lessonService: LessonService,
+    @Lazy val lessonService: LessonService
 ) : AssignmentServiceInterface {
 
     override fun findAll(): List<Assignment> = assignmentRepository.findAll().toList()

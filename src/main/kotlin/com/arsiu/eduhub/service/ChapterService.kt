@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service
 @Service
 class ChapterService @Autowired constructor(
     val chapterRepository: ChapterRepository,
-    @Lazy val courseService: CourseService,
-    val lessonService: LessonService
+    val lessonService: LessonService,
+    @Lazy val courseService: CourseService
 ) : ChapterServiceInterface {
 
     override fun findAll(): List<Chapter> = chapterRepository.findAll().toList()
