@@ -8,6 +8,11 @@ mvnw.cmd
 .DS_Store
 detekt.html
 
+### gradle ###
+.gradle
+build
+gradle
+
 ### STS ###
 .apt_generated
 .classpath
