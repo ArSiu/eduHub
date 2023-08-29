@@ -29,4 +29,8 @@ data class Assignment(
     @JoinColumn(name = "lesson_id")
     var lesson: Lesson = Lesson()
 
-)
+) {
+    override fun toString(): String {
+        return "Assignment \"$name\" from $lesson "
+    }
+}

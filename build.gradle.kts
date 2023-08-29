@@ -12,7 +12,6 @@ plugins {
     id("io.gitlab.arturbosch.detekt") version "1.23.1"
     kotlin("jvm") version "1.9.0"
     kotlin("plugin.spring") version "1.9.0"
-    kotlin("plugin.jpa") version "1.9.0"
     kotlin("kapt") version "1.9.0"
 }
 
@@ -24,9 +23,11 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.mapstruct:mapstruct:${Versions.mapstruct}")
     kapt("org.mapstruct:mapstruct-processor:${Versions.mapstruct}")
     api("org.springdoc:springdoc-openapi-starter-webmvc-ui:${Versions.springdoc}")

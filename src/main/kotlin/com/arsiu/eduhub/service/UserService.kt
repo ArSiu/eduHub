@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class UserService @Autowired constructor(
-    val userRepository: UserRepository
+    private val userRepository: UserRepository
 ) : UserServiceInterface {
 
     override fun findAll(): List<User> = userRepository.findAll().toList()
@@ -19,9 +19,9 @@ class UserService @Autowired constructor(
 
     override fun create(entity: User): User = userRepository.save(entity)
 
-    override fun update(id: Long, entity: User) {
+    override fun update(id: Long, entity: User): User {
         entity.id = findById(id).id
-        create(entity)
+        return create(entity)
     }
 
     override fun delete(id: Long) = userRepository.deleteById(id)

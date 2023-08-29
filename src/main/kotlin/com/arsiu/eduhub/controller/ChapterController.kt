@@ -4,6 +4,7 @@ import com.arsiu.eduhub.dto.request.ChapterDtoRequest
 import com.arsiu.eduhub.dto.response.ChapterDtoResponse
 import com.arsiu.eduhub.mapper.ChapterMapper
 import com.arsiu.eduhub.service.ChapterService
+import com.arsiu.eduhub.service.interfaces.ChapterServiceInterface
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/chapter")
 class ChapterController(
-    private val chapterService: ChapterService,
+    private val chapterService: ChapterServiceInterface,
     private val chapterMapper: ChapterMapper
 ) {
 
