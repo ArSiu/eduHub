@@ -5,6 +5,7 @@ import com.arsiu.eduhub.dto.response.CourseDtoResponse
 import com.arsiu.eduhub.mapper.CourseMapper
 import com.arsiu.eduhub.model.Course
 import com.arsiu.eduhub.service.CourseService
+import com.arsiu.eduhub.service.interfaces.CourseServiceInterface
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/course")
 class CourseController(
-    private val courseService: CourseService,
+    private val courseService: CourseServiceInterface,
     private val courseMapper: CourseMapper
 ) {
 

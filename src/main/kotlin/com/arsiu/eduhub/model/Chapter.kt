@@ -35,4 +35,7 @@ data class Chapter(
     @OneToMany(mappedBy = "chapter", cascade = [CascadeType.ALL], orphanRemoval = true)
     var lessons: MutableList<Lesson> = mutableListOf()
 
+    override fun toString(): String {
+        return "Chapter \"$name\" from $course "
+    }
 }

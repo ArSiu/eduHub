@@ -4,6 +4,7 @@ import com.arsiu.eduhub.dto.request.AssignmentDtoRequest
 import com.arsiu.eduhub.dto.response.AssignmentDtoResponse
 import com.arsiu.eduhub.mapper.AssignmentMapper
 import com.arsiu.eduhub.service.AssignmentService
+import com.arsiu.eduhub.service.interfaces.AssignmentServiceInterface
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/assignment")
 class AssignmentController(
-    private val assignmentService: AssignmentService,
+    private val assignmentService: AssignmentServiceInterface,
     private val assignmentMapper: AssignmentMapper
 ) {
 

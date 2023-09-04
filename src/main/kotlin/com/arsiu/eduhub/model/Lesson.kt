@@ -35,4 +35,8 @@ data class Lesson(
     @OneToMany(mappedBy = "lesson", cascade = [CascadeType.ALL], orphanRemoval = true)
     var assignments: MutableList<Assignment> = mutableListOf()
 
+    override fun toString(): String {
+        return "Lesson \"$name\" from $chapter "
+    }
+
 }

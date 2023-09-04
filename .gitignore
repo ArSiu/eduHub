@@ -7,11 +7,11 @@ mvnw
 mvnw.cmd
 .DS_Store
 detekt.html
+env.properties
 
 ### gradle ###
 .gradle
 build
-gradle
 
 ### STS ###
 .apt_generated

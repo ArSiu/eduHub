@@ -8,7 +8,7 @@ interface GeneralServiceInterface<T, ID> {
 
     fun create(entity: T): T
 
-    fun update(id: ID, entity: T)
+    fun update(id: ID, entity: T): T
 
     fun delete(id: ID)
 

@@ -5,6 +5,7 @@ import com.arsiu.eduhub.dto.response.UserDtoResponse
 import com.arsiu.eduhub.mapper.UserMapper
 import com.arsiu.eduhub.model.User
 import com.arsiu.eduhub.service.UserService
+import com.arsiu.eduhub.service.interfaces.UserServiceInterface
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/user")
 class UserController(
-    private val userService: UserService,
+    private val userService: UserServiceInterface,
     private val userMapper: UserMapper
 ) {
 

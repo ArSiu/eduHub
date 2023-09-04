@@ -4,6 +4,7 @@ import com.arsiu.eduhub.dto.request.LessonDtoRequest
 import com.arsiu.eduhub.dto.response.LessonDtoResponse
 import com.arsiu.eduhub.mapper.LessonMapper
 import com.arsiu.eduhub.service.LessonService
+import com.arsiu.eduhub.service.interfaces.LessonServiceInterface
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/lesson")
 class LessonController(
-    private val lessonService: LessonService,
+    private val lessonService: LessonServiceInterface,
     private val lessonMapper: LessonMapper
 ) {
 

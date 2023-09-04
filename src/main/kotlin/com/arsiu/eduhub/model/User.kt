@@ -59,4 +59,7 @@ data class User(
     @OneToMany(mappedBy = "owner", orphanRemoval = true)
     var createdCourses: Set<Course> = mutableSetOf()
 
+    override fun toString(): String {
+        return "User \"$firstName\" \"$secondName\" "
+    }
 }
