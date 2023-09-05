@@ -1,8 +1,9 @@
 package com.arsiu.eduhub.repository
 
 import com.arsiu.eduhub.model.Chapter
-import org.springframework.data.repository.CrudRepository
+import com.arsiu.eduhub.repository.custom.ChapterCustomRepository
+import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface ChapterRepository : CrudRepository<Chapter, Long>
+interface ChapterRepository : MongoRepository<Chapter, String>, ChapterCustomRepository

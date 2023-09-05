@@ -1,17 +1,17 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: postgres:latest
-    container_name: my-postgres
-    environment:
-      POSTGRES_DB: eduhub
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
+  mongodb:
+    image: mongo
+    command:
+      - --auth
     ports:
-      - "5432:5432"
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - mongo-data:/data/db
 
 volumes:
-  postgres-data:
+  mongo-data:

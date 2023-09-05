@@ -18,21 +18,21 @@ class AssignmentService @Autowired constructor(
 
     override fun findAll(): List<Assignment> = assignmentRepository.findAll().toList()
 
-    override fun findById(id: Long): Assignment =
+    override fun findById(id: String): Assignment =
         assignmentRepository.findById(id).orElseThrow { NotFoundException("Assigment with ID $id not found") }
 
     override fun create(entity: Assignment): Assignment {
         lessonService.findById(entity.lesson.id)
-
-        return assignmentRepository.save(entity)
+        return assignmentRepository.createCascade(entity)
     }
 
     @NotifyTrigger("Assignment was updated ")
-    override fun update(id: Long, entity: Assignment): Assignment {
+    override fun update(id: String, entity: Assignment): Assignment {
         entity.id = findById(id).id
+        delete(id)
         return create(entity)
     }
 
-    override fun delete(id: Long) = assignmentRepository.deleteById(id)
+    override fun delete(id: String) = assignmentRepository.deleteCascade(findById(id))
 
 }

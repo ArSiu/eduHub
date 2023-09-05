@@ -4,7 +4,6 @@ import com.arsiu.eduhub.dto.request.CourseDtoRequest
 import com.arsiu.eduhub.dto.response.CourseDtoResponse
 import com.arsiu.eduhub.mapper.CourseMapper
 import com.arsiu.eduhub.model.Course
-import com.arsiu.eduhub.service.CourseService
 import com.arsiu.eduhub.service.interfaces.CourseServiceInterface
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -32,6 +31,14 @@ class CourseController(
             HttpStatus.OK
         )
 
+    @GetMapping("/mostElements")
+    fun getAllCoursesSortedByInnerElements(): ResponseEntity<List<CourseDtoResponse>> =
+        ResponseEntity(
+            courseMapper.toDtoResponseList(courseService.sortCoursesByInners()),
+            HttpStatus.OK
+        )
+
+
     @PostMapping
     fun createNewCourse(@Valid @RequestBody course: CourseDtoRequest): ResponseEntity<CourseDtoResponse> {
         val createdCourse: Course = courseService.create(courseMapper.toEntity(course))
@@ -42,7 +49,7 @@ class CourseController(
     }
 
     @GetMapping("/{id}")
-    fun getCourseById(@PathVariable id: Long): ResponseEntity<CourseDtoResponse> =
+    fun getCourseById(@PathVariable id: String): ResponseEntity<CourseDtoResponse> =
         ResponseEntity(
             courseMapper.toDtoResponse(courseService.findById(id)),
             HttpStatus.OK
@@ -50,7 +57,7 @@ class CourseController(
 
     @PutMapping("/{id}")
     fun updateCourseById(
-        @PathVariable id: Long,
+        @PathVariable id: String,
         @Valid @RequestBody course: CourseDtoRequest
     ) {
         courseService.update(
@@ -60,7 +67,7 @@ class CourseController(
     }
 
     @DeleteMapping("/{id}")
-    fun deleteCourseById(@PathVariable id: Long) {
+    fun deleteCourseById(@PathVariable id: String) {
         courseService.delete(id)
     }
 

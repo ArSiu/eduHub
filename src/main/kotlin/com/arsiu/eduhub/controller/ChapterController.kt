@@ -3,7 +3,6 @@ package com.arsiu.eduhub.controller
 import com.arsiu.eduhub.dto.request.ChapterDtoRequest
 import com.arsiu.eduhub.dto.response.ChapterDtoResponse
 import com.arsiu.eduhub.mapper.ChapterMapper
-import com.arsiu.eduhub.service.ChapterService
 import com.arsiu.eduhub.service.interfaces.ChapterServiceInterface
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -31,7 +30,7 @@ class ChapterController(
         )
 
     @GetMapping("/{id}")
-    fun getChapterById(@PathVariable id: Long): ResponseEntity<ChapterDtoResponse> =
+    fun getChapterById(@PathVariable id: String): ResponseEntity<ChapterDtoResponse> =
         ResponseEntity(
             chapterMapper.toDtoResponse(chapterService.findById(id)),
             HttpStatus.OK
@@ -39,7 +38,7 @@ class ChapterController(
 
     @PutMapping("/{id}")
     fun updateChapterById(
-        @PathVariable id: Long,
+        @PathVariable id: String,
         @Valid @RequestBody chapter: ChapterDtoRequest
     ) {
         chapterService.update(
@@ -49,7 +48,7 @@ class ChapterController(
     }
 
     @DeleteMapping("/{id}")
-    fun deleteChapterById(@PathVariable id: Long) {
+    fun deleteChapterById(@PathVariable id: String) {
         chapterService.delete(id)
     }
 

@@ -3,7 +3,6 @@ package com.arsiu.eduhub.controller
 import com.arsiu.eduhub.dto.request.LessonDtoRequest
 import com.arsiu.eduhub.dto.response.LessonDtoResponse
 import com.arsiu.eduhub.mapper.LessonMapper
-import com.arsiu.eduhub.service.LessonService
 import com.arsiu.eduhub.service.interfaces.LessonServiceInterface
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -31,7 +30,7 @@ class LessonController(
         )
 
     @GetMapping("/{id}")
-    fun getLessonById(@PathVariable id: Long): ResponseEntity<LessonDtoResponse> =
+    fun getLessonById(@PathVariable id: String): ResponseEntity<LessonDtoResponse> =
         ResponseEntity(
             lessonMapper.toDtoResponse(lessonService.findById(id)),
             HttpStatus.OK
@@ -39,7 +38,7 @@ class LessonController(
 
     @PutMapping("/{id}")
     fun updateLessonById(
-        @PathVariable id: Long,
+        @PathVariable id: String,
         @Valid @RequestBody lesson: LessonDtoRequest
     ) {
         lessonService.update(
@@ -49,7 +48,7 @@ class LessonController(
     }
 
     @DeleteMapping("/{id}")
-    fun deleteLessonById(@PathVariable id: Long) {
+    fun deleteLessonById(@PathVariable id: String) {
         lessonService.delete(id)
     }
 

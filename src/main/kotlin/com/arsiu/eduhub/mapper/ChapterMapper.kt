@@ -18,8 +18,11 @@ interface ChapterMapper {
     fun toEntity(dto: ChapterDtoRequest): Chapter
 
     @Mapping(target = "courseId", source = "course.id")
+    @Mapping(target = "lessons", source = "lessons")
     fun toDtoResponse(chapter: Chapter): ChapterDtoResponse
 
+    @Mapping(target = "courseId", source = "course.id")
+    @Mapping(target = "lessons", source = "lessons")
     fun toDtoResponseList(chapters: List<Chapter>): List<ChapterDtoResponse>
 
 }

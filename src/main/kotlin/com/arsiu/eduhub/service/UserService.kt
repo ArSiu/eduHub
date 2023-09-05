@@ -14,16 +14,16 @@ class UserService @Autowired constructor(
 
     override fun findAll(): List<User> = userRepository.findAll().toList()
 
-    override fun findById(id: Long): User =
+    override fun findById(id: String): User =
         userRepository.findById(id).orElseThrow { NotFoundException("User with ID $id not found") }
 
     override fun create(entity: User): User = userRepository.save(entity)
 
-    override fun update(id: Long, entity: User): User {
+    override fun update(id: String, entity: User): User {
         entity.id = findById(id).id
         return create(entity)
     }
 
-    override fun delete(id: Long) = userRepository.deleteById(id)
+    override fun delete(id: String) = userRepository.deleteById(id)
 
 }

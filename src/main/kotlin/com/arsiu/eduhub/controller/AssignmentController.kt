@@ -3,7 +3,6 @@ package com.arsiu.eduhub.controller
 import com.arsiu.eduhub.dto.request.AssignmentDtoRequest
 import com.arsiu.eduhub.dto.response.AssignmentDtoResponse
 import com.arsiu.eduhub.mapper.AssignmentMapper
-import com.arsiu.eduhub.service.AssignmentService
 import com.arsiu.eduhub.service.interfaces.AssignmentServiceInterface
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -31,7 +30,7 @@ class AssignmentController(
         )
 
     @GetMapping("/{id}")
-    fun getAssignmentById(@PathVariable id: Long): ResponseEntity<AssignmentDtoResponse> =
+    fun getAssignmentById(@PathVariable id: String): ResponseEntity<AssignmentDtoResponse> =
         ResponseEntity(
             assignmentMapper.toDtoResponse(assignmentService.findById(id)),
             HttpStatus.OK
@@ -39,7 +38,7 @@ class AssignmentController(
 
     @PutMapping("/{id}")
     fun updateAssignmentById(
-        @PathVariable id: Long,
+        @PathVariable id: String,
         @Valid @RequestBody assignment: AssignmentDtoRequest
     ) {
         assignmentService.update(
@@ -49,7 +48,7 @@ class AssignmentController(
     }
 
     @DeleteMapping("/{id}")
-    fun deleteAssignmentById(@PathVariable id: Long) {
+    fun deleteAssignmentById(@PathVariable id: String) {
         assignmentService.delete(id)
     }
 

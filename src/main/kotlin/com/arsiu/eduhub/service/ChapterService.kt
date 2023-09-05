@@ -6,7 +6,6 @@ import com.arsiu.eduhub.model.Chapter
 import com.arsiu.eduhub.repository.ChapterRepository
 import com.arsiu.eduhub.service.interfaces.ChapterServiceInterface
 import com.arsiu.eduhub.service.interfaces.CourseServiceInterface
-import com.arsiu.eduhub.service.interfaces.LessonServiceInterface
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
@@ -14,40 +13,26 @@ import org.springframework.stereotype.Service
 @Service
 class ChapterService @Autowired constructor(
     private val chapterRepository: ChapterRepository,
-    private val lessonService: LessonServiceInterface,
     @Lazy val courseService: CourseServiceInterface
 ) : ChapterServiceInterface {
 
     override fun findAll(): List<Chapter> = chapterRepository.findAll().toList()
 
-    override fun findById(id: Long): Chapter =
+    override fun findById(id: String): Chapter =
         chapterRepository.findById(id).orElseThrow { NotFoundException("Chapter with ID $id not found") }
 
     override fun create(entity: Chapter): Chapter {
-        val course = courseService.findById(entity.course.id)
-        entity.course = course
-
-        val lessons = entity.lessons.toList()
-        entity.lessons.clear()
-
-        val createdChapter = chapterRepository.save(entity)
-
-        val updatedLessons = lessons.map { lesson ->
-            lesson.chapter = createdChapter
-            lessonService.create(lesson)
-        }
-
-        createdChapter.lessons.addAll(updatedLessons)
-
-        return chapterRepository.save(createdChapter)
+        courseService.findById(entity.course.id)
+        return chapterRepository.createCascade(entity)
     }
 
     @NotifyTrigger("Chapter was updated ")
-    override fun update(id: Long, entity: Chapter): Chapter {
+    override fun update(id: String, entity: Chapter): Chapter {
         entity.id = findById(id).id
+        delete(id)
         return create(entity)
     }
 
-    override fun delete(id: Long) = chapterRepository.deleteById(id)
+    override fun delete(id: String) = chapterRepository.deleteCascade(findById(id))
 
 }

@@ -4,7 +4,6 @@ import com.arsiu.eduhub.dto.request.UserDtoRequest
 import com.arsiu.eduhub.dto.response.UserDtoResponse
 import com.arsiu.eduhub.mapper.UserMapper
 import com.arsiu.eduhub.model.User
-import com.arsiu.eduhub.service.UserService
 import com.arsiu.eduhub.service.interfaces.UserServiceInterface
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -39,7 +38,7 @@ class UserController(
     }
 
     @GetMapping("/{id}")
-    fun getUserById(@PathVariable id: Long): ResponseEntity<UserDtoResponse> =
+    fun getUserById(@PathVariable id: String): ResponseEntity<UserDtoResponse> =
         ResponseEntity(
             userMapper.toDtoOut(userService.findById(id)),
             HttpStatus.OK
@@ -47,7 +46,7 @@ class UserController(
 
     @PutMapping("/{id}")
     fun updateUserById(
-        @PathVariable id: Long,
+        @PathVariable id: String,
         @Valid @RequestBody user: UserDtoRequest
     ) {
         userService.update(
@@ -57,7 +56,7 @@ class UserController(
     }
 
     @DeleteMapping("/{id}")
-    fun deletePostById(@PathVariable id: Long) {
+    fun deletePostById(@PathVariable id: String) {
         userService.delete(id)
     }
 

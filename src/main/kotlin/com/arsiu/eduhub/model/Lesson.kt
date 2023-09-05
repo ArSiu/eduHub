@@ -1,42 +1,30 @@
 package com.arsiu.eduhub.model
 
-import com.fasterxml.jackson.annotation.JsonProperty
-import jakarta.persistence.CascadeType
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
-import jakarta.persistence.OneToMany
-import jakarta.persistence.Table
+import org.bson.types.ObjectId
+import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.Document
+import org.springframework.data.mongodb.core.mapping.DocumentReference
 
-@Entity
-@Table(name = "lesson")
+@Document("lesson")
 data class Lesson(
 
     @Id
-    @JsonProperty("id")
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: Long = 0L,
+    var id: String = ObjectId().toString(),
 
-    @JsonProperty("name")
-    @Column(name = "name", length = 50)
     var name: String = "",
 
-    @ManyToOne
-    @JoinColumn(name = "chapter_id")
+    @DocumentReference
     var chapter: Chapter = Chapter()
 
 ) {
 
-    @OneToMany(mappedBy = "lesson", cascade = [CascadeType.ALL], orphanRemoval = true)
+    @DocumentReference
     var assignments: MutableList<Assignment> = mutableListOf()
 
+
     override fun toString(): String {
-        return "Lesson \"$name\" from $chapter "
+        return " Lesson \"$name\" from chapter $chapter)"
     }
+
 
 }

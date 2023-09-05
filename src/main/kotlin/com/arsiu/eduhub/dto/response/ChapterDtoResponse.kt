@@ -1,8 +1,8 @@
 package com.arsiu.eduhub.dto.response
 
 data class ChapterDtoResponse(
-    val id: Long,
+    val id: String,
     val name: String,
-    val courseId: Long,
+    val courseId: String,
     val lessons: List<LessonDtoResponse>
 )

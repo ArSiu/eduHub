@@ -14,12 +14,16 @@ interface CourseMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "students", ignore = true)
+    @Mapping(target = "chapters", source = "chapters")
     @Mapping(target = "owner.id", source = "ownerId")
     fun toEntity(dto: CourseDtoRequest): Course
 
     @Mapping(target = "ownerId", source = "owner.id")
+    @Mapping(target = "chapters", source = "chapters")
     fun toDtoResponse(course: Course): CourseDtoResponse
 
+    @Mapping(target = "ownerId", source = "owner.id")
+    @Mapping(target = "chapters", source = "chapters")
     fun toDtoResponseList(courses: List<Course>): List<CourseDtoResponse>
 
 }

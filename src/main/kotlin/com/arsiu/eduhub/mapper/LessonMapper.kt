@@ -21,6 +21,8 @@ interface LessonMapper {
     @Mapping(target = "assignments", source = "assignments")
     fun toDtoResponse(lesson: Lesson): LessonDtoResponse
 
+    @Mapping(target = "chapterId", source = "chapter.id")
+    @Mapping(target = "assignments", source = "assignments")
     fun toDtoResponseList(lessons: List<Lesson>): List<LessonDtoResponse>
 
 }

@@ -1,7 +1,7 @@
 package com.arsiu.eduhub.dto.response
 
 data class AssignmentDtoResponse(
-    val id: Long,
+    val id: String,
     val name: String,
-    val lessonId: Long
+    val lessonId: String
 )
