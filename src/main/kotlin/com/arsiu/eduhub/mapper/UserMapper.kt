@@ -19,8 +19,10 @@ interface UserMapper {
 
     @Mapping(target = "boughtCourses", source = "boughtCourses")
     @Mapping(target = "createdCourses", source = "createdCourses")
-    fun toDtoOut(user: User): UserDtoResponse
+    fun toDtoResponse(user: User): UserDtoResponse
 
-    fun toDtoOutList(users: List<User>): List<UserDtoResponse>
+    @Mapping(target = "boughtCourses", source = "boughtCourses")
+    @Mapping(target = "createdCourses", source = "createdCourses")
+    fun toDtoResponseList(users: List<User>): List<UserDtoResponse>
 
 }

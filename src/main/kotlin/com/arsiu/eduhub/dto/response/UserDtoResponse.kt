@@ -8,5 +8,5 @@ data class UserDtoResponse(
     val secondName: String,
     val role: Role,
     val boughtCourses: Set<CourseDtoResponse>,
-    var createdCourses: Set<CourseDtoResponse>
+    val createdCourses: Set<CourseDtoResponse>
 )

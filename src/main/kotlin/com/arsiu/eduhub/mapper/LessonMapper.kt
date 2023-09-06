@@ -3,8 +3,10 @@ package com.arsiu.eduhub.mapper
 import com.arsiu.eduhub.dto.request.LessonDtoRequest
 import com.arsiu.eduhub.dto.response.LessonDtoResponse
 import com.arsiu.eduhub.model.Lesson
+import org.mapstruct.IterableMapping
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
+import org.mapstruct.Named
 
 @Mapper(
     componentModel = "spring",
@@ -12,16 +14,30 @@ import org.mapstruct.Mapping
 )
 interface LessonMapper {
 
+    @Named("toEntity")
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "chapter.id", source = "chapterId")
-    @Mapping(target = "assignments", source = "assignments")
+    @Mapping(target = "chapter", ignore = true)
+    @Mapping(target = "copy", ignore = true)
+    @Mapping(target = "assignments", source = "assignments", qualifiedByName = ["toEntityList"])
     fun toEntity(dto: LessonDtoRequest): Lesson
 
-    @Mapping(target = "chapterId", source = "chapter.id")
+    @Named("toEntityList")
+    @IterableMapping(qualifiedByName = ["toEntity"])
+    fun toEntityList(dto: List<LessonDtoRequest>): List<Lesson>
+
+    @Named("toEntityUpdate")
+    @Mapping(target = "chapter", ignore = true)
+    @Mapping(target = "copy", ignore = true)
+    @Mapping(target = "assignments", source = "assignments", qualifiedByName = ["toEntityListUpdate"])
+    fun toEntityUpdate(dto: LessonDtoRequest): Lesson
+
+    @Named("toEntityListUpdate")
+    @IterableMapping(qualifiedByName = ["toEntityUpdate"])
+    fun toEntityListUpdate(dto: List<LessonDtoRequest>): List<Lesson>
+
     @Mapping(target = "assignments", source = "assignments")
     fun toDtoResponse(lesson: Lesson): LessonDtoResponse
 
-    @Mapping(target = "chapterId", source = "chapter.id")
     @Mapping(target = "assignments", source = "assignments")
     fun toDtoResponseList(lessons: List<Lesson>): List<LessonDtoResponse>
 

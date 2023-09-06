@@ -5,12 +5,11 @@ import jakarta.validation.constraints.Size
 
 data class LessonDtoRequest(
 
+    val id: String,
+
     @field:NotEmpty(message = "name is required")
     @field:Size(min = 5, message = "name must be at least 5 characters long")
     val name: String,
-
-    @field:NotEmpty(message = "chapterId is required")
-    val chapterId: String,
 
     @field:NotEmpty(message = "assignments is required")
     val assignments: List<AssignmentDtoRequest>

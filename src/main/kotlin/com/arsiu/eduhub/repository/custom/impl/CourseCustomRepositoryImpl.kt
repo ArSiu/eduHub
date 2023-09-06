@@ -11,22 +11,55 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregat
 import org.springframework.data.mongodb.core.aggregation.Aggregation.project
 import org.springframework.data.mongodb.core.aggregation.Aggregation.sort
 import org.springframework.data.mongodb.core.query.Criteria
+import org.springframework.data.mongodb.core.query.Query
+import org.springframework.data.mongodb.core.query.Update
 import org.springframework.stereotype.Repository
-
 
 @Repository
 class CourseCustomRepositoryImpl(
     private val mongoTemplate: MongoTemplate,
-    @Qualifier("chapterCustomRepositoryImpl") private val chapterCustomRepository: ChapterCustomRepository
+    @Qualifier("chapterCustomRepositoryImpl")
+    private val chapterCustomRepository: ChapterCustomRepository
 ) : CourseCustomRepository {
 
     override fun createCascade(entity: Course): Course {
+        resetField(entity,"id")
         val course = mongoTemplate.save(entity)
         entity.chapters.forEach {
             it.course = course
             chapterCustomRepository.createCascade(it)
         }
-        return course
+        return mongoTemplate.save(course)
+    }
+
+    override fun updateCascade(entity: Course): Course {
+        val query = Query.query(Criteria.where("id").`is`(entity.id))
+
+        val existingEntity = mongoTemplate.findOne(query, Course::class.java)
+
+        if(existingEntity != null) {
+            if (existingEntity != entity) {
+
+                existingEntity.chapters.filter { f ->
+                    entity.chapters.none { s -> f.id == s.id }
+                }.forEach { chapterCustomRepository.deleteCascade(it) }
+
+                entity.chapters.forEach {
+                    it.course = entity
+                    chapterCustomRepository.updateCascade(it)
+                }
+
+                val update = Update()
+                    .set("id", entity.id)
+                    .set("name", entity.name)
+                    .set("owner", entity.owner)
+                    .set("chapters", entity.chapters)
+                mongoTemplate.upsert(query, update, Course::class.java)
+            }
+            return entity
+        }
+
+        return createCascade(entity)
     }
 
     override fun deleteCascade(entity: Course) {
@@ -48,4 +81,5 @@ class CourseCustomRepositoryImpl(
 
         return mongoTemplate.aggregate(aggregation, "course", Course::class.java).toList()
     }
+
 }

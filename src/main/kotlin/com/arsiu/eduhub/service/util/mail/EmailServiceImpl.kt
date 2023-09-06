@@ -8,7 +8,8 @@ import org.springframework.stereotype.Service
 @Service
 class EmailServiceImpl(
     private val jms: JavaMailSender,
-    @Value("\${spring.mail.username}") private val sender: String
+    @Value("\${spring.mail.username}")
+    private val sender: String
 ) : EmailService {
 
     override fun sendMail(details: EmailParameters) {
@@ -21,4 +22,5 @@ class EmailServiceImpl(
 
         jms.send(smm)
     }
+
 }

@@ -2,7 +2,7 @@ package com.arsiu.eduhub.bpp
 
 import com.arsiu.eduhub.annotation.NotifyTrigger
 import com.arsiu.eduhub.model.enums.Role
-import com.arsiu.eduhub.service.UserService
+import com.arsiu.eduhub.service.impl.UserServiceImpl
 import com.arsiu.eduhub.service.util.mail.EmailParameters
 import com.arsiu.eduhub.service.util.mail.EmailServiceImpl
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -19,7 +19,7 @@ import kotlin.reflect.full.memberFunctions
 @Component
 @Suppress("SpreadOperator")
 class NotifyTriggerAnnotationHandlerBeanPostProcessor(
-    private val userService: UserService,
+    private val userServiceImpl: UserServiceImpl,
     private val emailServiceImpl: EmailServiceImpl
 ) : BeanPostProcessor {
 
@@ -43,7 +43,9 @@ class NotifyTriggerAnnotationHandlerBeanPostProcessor(
         return beanClass?.let { clazz ->
             Proxy.newProxyInstance(clazz.java.classLoader, clazz.java.interfaces) { _, method, args ->
                 val result = method.invoke(bean, *(args ?: emptyArray()))
-                getAnnotation(clazz, method)?.let { notifyUsers(it.value + result.toString()) }
+                getAnnotation(clazz, method)?.let { notifyUsers(
+                    it.value + result.toString()
+                ) }
                 result
             }
         } ?: bean
@@ -53,14 +55,14 @@ class NotifyTriggerAnnotationHandlerBeanPostProcessor(
         return beanClass.memberFunctions.firstOrNull {
             (it.name == method.name)
                     &&
-                    (it.javaClass.typeParameters.contentEquals(method.javaClass.typeParameters))
+            (it.javaClass.typeParameters.contentEquals(method.javaClass.typeParameters))
         }?.findAnnotation<NotifyTrigger>()
     }
 
     @OptIn(DelicateCoroutinesApi::class)
     private fun notifyUsers(msg: String) {
         GlobalScope.launch {
-            userService.findAll()
+            userServiceImpl.findAll()
                 .filter { it.role == Role.STUDENT }
                 .forEach { emailServiceImpl.sendMail(EmailParameters(it.email, msg, msg)) }
         }
