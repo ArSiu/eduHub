@@ -4,10 +4,7 @@ import com.arsiu.eduhub.dto.request.AssignmentDtoRequest
 import com.arsiu.eduhub.dto.response.AssignmentDtoResponse
 import com.arsiu.eduhub.mapper.AssignmentMapper
 import com.arsiu.eduhub.service.AssignmentService
-import com.arsiu.eduhub.service.interfaces.AssignmentServiceInterface
 import jakarta.validation.Valid
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -19,38 +16,26 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/assignment")
 class AssignmentController(
-    private val assignmentService: AssignmentServiceInterface,
+    private val assignmentService: AssignmentService,
     private val assignmentMapper: AssignmentMapper
 ) {
 
     @GetMapping
-    fun getAllAssignments(): ResponseEntity<List<AssignmentDtoResponse>> =
-        ResponseEntity(
-            assignmentMapper.toDtoResponseList(assignmentService.findAll()),
-            HttpStatus.OK
-        )
+    fun getAllAssignments(): List<AssignmentDtoResponse> =
+        assignmentMapper.toResponseDtoList(assignmentService.findAll())
 
     @GetMapping("/{id}")
-    fun getAssignmentById(@PathVariable id: Long): ResponseEntity<AssignmentDtoResponse> =
-        ResponseEntity(
-            assignmentMapper.toDtoResponse(assignmentService.findById(id)),
-            HttpStatus.OK
-        )
+    fun getAssignmentById(@PathVariable id: String): AssignmentDtoResponse =
+        assignmentMapper.toResponseDto(assignmentService.findById(id))
 
-    @PutMapping("/{id}")
-    fun updateAssignmentById(
-        @PathVariable id: Long,
-        @Valid @RequestBody assignment: AssignmentDtoRequest
-    ) {
-        assignmentService.update(
-            id,
-            assignmentMapper.toEntity(assignment)
-        )
+    @PutMapping
+    fun updateAssignmentById(@Valid @RequestBody assignment: AssignmentDtoRequest): AssignmentDtoResponse {
+        val updated = assignmentService.update(assignmentMapper.toEntityUpdate(assignment))
+        return assignmentMapper.toResponseDto(updated)
     }
 
     @DeleteMapping("/{id}")
-    fun deleteAssignmentById(@PathVariable id: Long) {
+    fun deleteAssignmentById(@PathVariable id: String) =
         assignmentService.delete(id)
-    }
 
 }

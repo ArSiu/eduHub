@@ -1,45 +1,62 @@
 package com.arsiu.eduhub.model
 
-import com.fasterxml.jackson.annotation.JsonProperty
-import jakarta.persistence.CascadeType
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToMany
-import jakarta.persistence.ManyToOne
-import jakarta.persistence.OneToMany
-import jakarta.persistence.Table
+import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.Document
+import org.springframework.data.mongodb.core.mapping.DocumentReference
 
-@Entity
-@Table(name = "course")
-data class Course(
+@Document("course")
+data class Course(var name: String = "") {
 
     @Id
-    @JsonProperty("id")
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: Long = 0L,
+    lateinit var id: String
 
-    @JsonProperty("name")
-    @Column(name = "name", length = 50)
-    var name: String = "",
+    @DocumentReference
+    lateinit var owner: User
 
-    @ManyToOne
-    @JoinColumn(name = "owner_id")
-    var owner: User = User()
+    @DocumentReference
+    lateinit var chapters: MutableList<Chapter>
 
-) {
+    @DocumentReference
+    lateinit var students: MutableSet<User>
 
-    @ManyToMany(mappedBy = "boughtCourses")
-    var students: Set<User> = mutableSetOf()
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Course) return false
 
-    @OneToMany(mappedBy = "course", cascade = [CascadeType.ALL], orphanRemoval = true)
-    var chapters: MutableList<Chapter> = mutableListOf()
+        if (name != other.name) return false
+        if ((this::id.isInitialized && other::id.isInitialized && id != other.id)
+            || this::id.isInitialized != other::id.isInitialized
+        ) return false
+        if ((this::owner.isInitialized && other::owner.isInitialized && owner != other.owner)
+            || this::owner.isInitialized != other::owner.isInitialized
+        ) return false
+        if ((this::chapters.isInitialized && other::chapters.isInitialized && chapters != other.chapters)
+            || this::chapters.isInitialized != other::chapters.isInitialized
+        ) return false
+        if ((this::students.isInitialized && other::students.isInitialized && students != other.students)
+            || this::students.isInitialized != other::students.isInitialized
+        ) return false
 
-    override fun toString(): String {
-        return "Course \"$name\" from $owner "
+        return true
     }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        if (this::id.isInitialized) {
+            result = 31 * result + id.hashCode()
+        }
+        if (this::owner.isInitialized) {
+            result = 31 * result + owner.hashCode()
+        }
+        if (this::chapters.isInitialized) {
+            result = 31 * result + chapters.hashCode()
+        }
+        if (this::students.isInitialized) {
+            result = 31 * result + students.hashCode()
+        }
+        return result
+    }
+
+    override fun toString(): String = " Course \"$name\" by $owner "
+
 }

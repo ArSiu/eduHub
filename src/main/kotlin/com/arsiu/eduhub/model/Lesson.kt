@@ -1,42 +1,53 @@
 package com.arsiu.eduhub.model
 
-import com.fasterxml.jackson.annotation.JsonProperty
-import jakarta.persistence.CascadeType
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
-import jakarta.persistence.OneToMany
-import jakarta.persistence.Table
+import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.Document
+import org.springframework.data.mongodb.core.mapping.DocumentReference
 
-@Entity
-@Table(name = "lesson")
-data class Lesson(
+@Document("lesson")
+data class Lesson(var name: String = "") {
 
     @Id
-    @JsonProperty("id")
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: Long = 0L,
+    lateinit var id: String
 
-    @JsonProperty("name")
-    @Column(name = "name", length = 50)
-    var name: String = "",
+    @DocumentReference
+    lateinit var chapter: Chapter
 
-    @ManyToOne
-    @JoinColumn(name = "chapter_id")
-    var chapter: Chapter = Chapter()
+    @DocumentReference
+    lateinit var assignments: MutableList<Assignment>
 
-) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Lesson) return false
 
-    @OneToMany(mappedBy = "lesson", cascade = [CascadeType.ALL], orphanRemoval = true)
-    var assignments: MutableList<Assignment> = mutableListOf()
+        if (name != other.name) return false
+        if ((this::id.isInitialized && other::id.isInitialized && id != other.id)
+            || this::id.isInitialized != other::id.isInitialized
+        ) return false
+        if ((this::chapter.isInitialized && other::chapter.isInitialized && chapter != other.chapter)
+            || this::chapter.isInitialized != other::chapter.isInitialized
+        ) return false
+        if ((this::assignments.isInitialized && other::assignments.isInitialized && assignments != other.assignments)
+            || this::assignments.isInitialized != other::assignments.isInitialized
+        ) return false
 
-    override fun toString(): String {
-        return "Lesson \"$name\" from $chapter "
+        return true
     }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        if (this::id.isInitialized) {
+            result = 31 * result + id.hashCode()
+        }
+        if (this::chapter.isInitialized) {
+            result = 31 * result + chapter.hashCode()
+        }
+        if (this::assignments.isInitialized) {
+            result = 31 * result + assignments.hashCode()
+        }
+        return result
+    }
+
+    override fun toString(): String = " Lesson \"$name\""
 
 }

@@ -1,8 +1,8 @@
 package com.arsiu.eduhub.repository
 
 import com.arsiu.eduhub.model.User
-import org.springframework.data.repository.CrudRepository
+import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface UserRepository : CrudRepository<User, Long>
+interface UserRepository : MongoRepository<User, String>

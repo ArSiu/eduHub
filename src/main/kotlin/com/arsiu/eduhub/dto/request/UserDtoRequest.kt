@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Size
 
 data class UserDtoRequest(
 
+    val id: String,
+
     @field:NotEmpty(message = "firstName is required")
     @field:Size(min = 3, message = "firstName must be at least 3 characters long")
     val firstName: String,

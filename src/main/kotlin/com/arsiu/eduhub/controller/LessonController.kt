@@ -4,10 +4,7 @@ import com.arsiu.eduhub.dto.request.LessonDtoRequest
 import com.arsiu.eduhub.dto.response.LessonDtoResponse
 import com.arsiu.eduhub.mapper.LessonMapper
 import com.arsiu.eduhub.service.LessonService
-import com.arsiu.eduhub.service.interfaces.LessonServiceInterface
 import jakarta.validation.Valid
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -19,38 +16,26 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/lesson")
 class LessonController(
-    private val lessonService: LessonServiceInterface,
+    private val lessonService: LessonService,
     private val lessonMapper: LessonMapper
 ) {
 
     @GetMapping
-    fun getAllLessons(): ResponseEntity<List<LessonDtoResponse>> =
-        ResponseEntity(
-            lessonMapper.toDtoResponseList(lessonService.findAll()),
-            HttpStatus.OK
-        )
+    fun getAllLessons(): List<LessonDtoResponse> =
+        lessonMapper.toDtoResponseList(lessonService.findAll())
 
     @GetMapping("/{id}")
-    fun getLessonById(@PathVariable id: Long): ResponseEntity<LessonDtoResponse> =
-        ResponseEntity(
-            lessonMapper.toDtoResponse(lessonService.findById(id)),
-            HttpStatus.OK
-        )
+    fun getLessonById(@PathVariable id: String): LessonDtoResponse =
+        lessonMapper.toDtoResponse(lessonService.findById(id))
 
-    @PutMapping("/{id}")
-    fun updateLessonById(
-        @PathVariable id: Long,
-        @Valid @RequestBody lesson: LessonDtoRequest
-    ) {
-        lessonService.update(
-            id,
-            lessonMapper.toEntity(lesson)
-        )
+    @PutMapping
+    fun updateLessonById(@Valid @RequestBody lesson: LessonDtoRequest): LessonDtoResponse {
+        val updated = lessonService.update(lessonMapper.toEntityUpdate(lesson))
+        return lessonMapper.toDtoResponse(updated)
     }
 
     @DeleteMapping("/{id}")
-    fun deleteLessonById(@PathVariable id: Long) {
+    fun deleteLessonById(@PathVariable id: String) =
         lessonService.delete(id)
-    }
 
 }

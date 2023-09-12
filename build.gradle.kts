@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 object Versions {
     const val mapstruct = "1.5.5.Final"
     const val springdoc = "2.1.0"
-    const val postgresql = "42.6.0"
 }
 
 plugins {
@@ -20,10 +19,10 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-mail")
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb:3.1.2")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
@@ -31,7 +30,6 @@ dependencies {
     implementation("org.mapstruct:mapstruct:${Versions.mapstruct}")
     kapt("org.mapstruct:mapstruct-processor:${Versions.mapstruct}")
     api("org.springdoc:springdoc-openapi-starter-webmvc-ui:${Versions.springdoc}")
-    runtimeOnly("org.postgresql:postgresql:${Versions.postgresql}")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 

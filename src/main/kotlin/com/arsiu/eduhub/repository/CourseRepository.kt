@@ -1,8 +1,9 @@
 package com.arsiu.eduhub.repository
 
 import com.arsiu.eduhub.model.Course
-import org.springframework.data.repository.CrudRepository
+import com.arsiu.eduhub.repository.custom.CourseCustomRepository
+import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface CourseRepository : CrudRepository<Course, Long>
+interface CourseRepository : MongoRepository<Course, String>, CourseCustomRepository
