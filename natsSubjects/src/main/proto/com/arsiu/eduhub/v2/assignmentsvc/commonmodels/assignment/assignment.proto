@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+option java_package = "com.arsiu.eduhub.v2.assignmentsvc.commonmodels.assignment";
+option java_outer_classname = "AssignmentProto";
+
+message Assignment {
+  string id = 1;
+  string name = 2;
+}
+
+message AssignmentId {
+  string id = 1;
+}
+
+message Assignments {
+  repeated Assignment assignments = 1;
+}
+
+message AssignmentRequest {
+  oneof request {
+    Assignment assignment = 1;
+    AssignmentId assignment_id = 2;
+  }
+}
+
+message AssignmentResponse {
+  oneof response {
+    Success success = 1;
+    Failure failure = 2;
+  }
+
+  message Success {
+    string message = 1;
+    oneof response {
+      Assignment assignment = 2;
+      Assignments assignments = 3;
+    }
+  }
+
+  message Failure {
+    string message = 100;
+
+    oneof error {
+      CustomError err = 1;
+    }
+
+    message CustomError {
+      string ex = 1;
+      string message = 2;
+    }
+  }
+}

@@ -11,7 +11,7 @@ env.properties
 
 ### gradle ###
 .gradle
-build
+eduHub/build
 
 ### STS ###
 .apt_generated
