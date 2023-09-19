@@ -1,9 +1,11 @@
 syntax = "proto3";
 
+package com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment;
+
+option java_multiple_files = true;
+
 import "com/arsiu/eduhub/v2/assignmentsvc/commonmodels/assignment/assignment.proto";
-option java_package = "com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment";
-option java_outer_classname = "FindByIdAssignmentResponseProto";
 
 message FindByIdAssignmentResponse {
-  AssignmentResponse response = 1;
+  commonmodels.assignment.AssignmentResponse response = 1;
 }

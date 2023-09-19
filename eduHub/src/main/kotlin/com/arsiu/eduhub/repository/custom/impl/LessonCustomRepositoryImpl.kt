@@ -18,7 +18,7 @@ class LessonCustomRepositoryImpl(
 ) : LessonCustomRepository {
 
     override fun createCascade(entity: Lesson): Lesson {
-        resetField(entity,"id")
+        resetField(entity, "id")
         val lesson = mongoTemplate.save(entity)
         lesson.assignments.forEach {
             it.lesson = lesson

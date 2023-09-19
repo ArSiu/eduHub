@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 
 @Service
-class ChapterServiceImpl (
+class ChapterServiceImpl(
     private val chapterRepository: ChapterRepository,
     @Lazy
     private val courseService: CourseService

@@ -8,7 +8,7 @@ import org.testcontainers.containers.wait.strategy.Wait
 import org.testcontainers.junit.jupiter.Testcontainers
 
 @Testcontainers
-class TestContainers: BeforeAllCallback,AfterAllCallback {
+class TestContainers : BeforeAllCallback, AfterAllCallback {
 
     companion object {
 

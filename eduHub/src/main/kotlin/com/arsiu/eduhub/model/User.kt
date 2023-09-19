@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference
 @EqualsAndHashCode
 @Getter
 @Setter
-class User{
+class User {
 
     @Id
     lateinit var id: String

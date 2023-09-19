@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 object Versions {
     const val mapstruct = "1.5.5.Final"
     const val springdoc = "2.1.0"
+    const val lombok = "1.18.28"
 }
 
 plugins {
@@ -33,8 +34,8 @@ dependencies {
 
     implementation("org.mapstruct:mapstruct:${Versions.mapstruct}")
     kapt("org.mapstruct:mapstruct-processor:${Versions.mapstruct}")
-    implementation("org.projectlombok:lombok:1.18.28")
-    annotationProcessor("org.projectlombok:lombok:1.18.28")
+    implementation("org.projectlombok:lombok:${Versions.lombok}")
+    kapt("org.projectlombok:lombok:${Versions.lombok}")
 
     api("org.springdoc:springdoc-openapi-starter-webmvc-ui:${Versions.springdoc}")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

@@ -23,7 +23,7 @@ class CourseCustomRepositoryImpl(
 ) : CourseCustomRepository {
 
     override fun createCascade(entity: Course): Course {
-        resetField(entity,"id")
+        resetField(entity, "id")
         val course = mongoTemplate.save(entity)
         entity.chapters.forEach {
             it.course = course
@@ -37,7 +37,7 @@ class CourseCustomRepositoryImpl(
 
         val existingEntity = mongoTemplate.findOne(query, Course::class.java)
 
-        if(existingEntity != null) {
+        if (existingEntity != null) {
             if (existingEntity != entity) {
 
                 existingEntity.chapters.filter { f ->

@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 
 @Service
-class CourseServiceImpl (
+class CourseServiceImpl(
     private val courseRepository: CourseRepository,
     @Lazy
     private val userService: UserService
@@ -24,7 +24,7 @@ class CourseServiceImpl (
 
     @NotifyTrigger("New Course Available ")
     override fun create(entity: Course): Course {
-        entity.owner.id.let { entity.owner = userService.findById(it)}
+        entity.owner.id.let { entity.owner = userService.findById(it) }
         return courseRepository.createCascade(entity)
     }
 

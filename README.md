@@ -1,4 +1,5 @@
 # EduHub
+
 Educational Hub is an project for learning Kotlin with Spring Boot
 
 #Entities relationship

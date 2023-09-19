@@ -20,7 +20,7 @@ interface CascadeRepository<T, ID> {
             field.isAccessible = true
             field.set(target, null)
         } catch (e: ReflectiveOperationException) {
-            logger.error("An error occurred while resetting the field: $fieldName", e)
+            logger.error("An error occurred while resetting the field: {}", fieldName, e)
         }
     }
 

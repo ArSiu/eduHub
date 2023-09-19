@@ -18,7 +18,7 @@ class ChapterCustomRepositoryImpl(
 ) : ChapterCustomRepository {
 
     override fun createCascade(entity: Chapter): Chapter {
-        resetField(entity,"id")
+        resetField(entity, "id")
         val chapter = mongoTemplate.save(entity)
         chapter.lessons.forEach {
             it.chapter = chapter

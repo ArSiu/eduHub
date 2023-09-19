@@ -2,14 +2,12 @@ package com.arsiu.eduhub.config.bpp
 
 import com.arsiu.eduhub.annotation.NotifyTrigger
 import com.arsiu.eduhub.model.enums.Role
-import com.arsiu.eduhub.repository.custom.CascadeRepository
 import com.arsiu.eduhub.service.UserService
 import com.arsiu.eduhub.service.util.mail.EmailParameters
 import com.arsiu.eduhub.service.util.mail.EmailServiceImpl
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.stereotype.Component
@@ -51,7 +49,7 @@ class NotifyTriggerAnnotationHandlerBeanPostProcessor(
                 try {
                     val result = method.invoke(bean, *(args ?: emptyArray()))
                     getAnnotation(clazz, method)?.let { notifyUsers(it.value + result.toString()) }
-                    result
+                    return@newProxyInstance result
                 } catch (e: InvocationTargetException) {
                     logger.error(e.targetException.toString())
                     throw e
@@ -64,7 +62,7 @@ class NotifyTriggerAnnotationHandlerBeanPostProcessor(
         return beanClass.memberFunctions.firstOrNull {
             (it.name == method.name)
                     &&
-            (it.javaClass.typeParameters.contentEquals(method.javaClass.typeParameters))
+                    (it.javaClass.typeParameters.contentEquals(method.javaClass.typeParameters))
         }?.findAnnotation<NotifyTrigger>()
     }
 

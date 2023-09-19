@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository
 class AssignmentCustomRepositoryImpl(private val mongoTemplate: MongoTemplate) : AssignmentCustomRepository {
 
     override fun createCascade(entity: Assignment): Assignment {
-        resetField(entity,"id")
+        resetField(entity, "id")
         return mongoTemplate.save(entity)
     }
 
@@ -21,7 +21,7 @@ class AssignmentCustomRepositoryImpl(private val mongoTemplate: MongoTemplate) :
 
         val existingEntity = mongoTemplate.findOne(query, Assignment::class.java)
 
-        if(existingEntity != null) {
+        if (existingEntity != null) {
 
             if (existingEntity != entity) {
                 val update = Update()

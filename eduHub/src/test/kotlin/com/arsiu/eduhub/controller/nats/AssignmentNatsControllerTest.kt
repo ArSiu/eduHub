@@ -6,19 +6,14 @@ import com.arsiu.eduhub.v2.assignmentsvc.NatsSubject.ASSIGNMENT_BY_ID
 import com.arsiu.eduhub.v2.assignmentsvc.NatsSubject.ASSIGNMENT_DELETE_BY_ID
 import com.arsiu.eduhub.v2.assignmentsvc.NatsSubject.ASSIGNMENT_FIND_ALL
 import com.arsiu.eduhub.v2.assignmentsvc.NatsSubject.ASSIGNMENT_UPDATE_BY_ID
-import com.arsiu.eduhub.v2.assignmentsvc.commonmodels.assignment.AssignmentProto
-import com.arsiu.eduhub.v2.assignmentsvc.commonmodels.assignment.AssignmentProto.AssignmentId
-import com.arsiu.eduhub.v2.assignmentsvc.commonmodels.assignment.AssignmentProto.AssignmentRequest
-import com.arsiu.eduhub.v2.assignmentsvc.commonmodels.assignment.AssignmentProto.AssignmentResponse
-import com.arsiu.eduhub.v2.assignmentsvc.commonmodels.assignment.AssignmentProto.AssignmentResponse.Success
-import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.DeleteByIdAssignmentRequestProto.DeleteByIdAssignmentRequest
-import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.FindAllAssignmentRequestProto.FindAllAssignmentRequest
-import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.FindByIdAssignmentRequestProto.FindByIdAssignmentRequest
-import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.UpdateAssignmentRequestProto.UpdateAssignmentRequest
-import com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment.DeleteByIdAssignmentResponseProto.DeleteByIdAssignmentResponse
-import com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment.FindAllAssignmentResponseProto.FindAllAssignmentResponse
-import com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment.FindByIdAssignmentResponseProto.FindByIdAssignmentResponse
-import com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment.UpdateAssignmentResponseProto.UpdateAssignmentResponse
+import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.DeleteByIdAssignmentRequest
+import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.FindAllAssignmentRequest
+import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.FindByIdAssignmentRequest
+import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.UpdateAssignmentRequest
+import com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment.DeleteByIdAssignmentResponse
+import com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment.FindAllAssignmentResponse
+import com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment.FindByIdAssignmentResponse
+import com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment.UpdateAssignmentResponse
 import io.nats.client.Connection
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -36,13 +31,13 @@ class AssignmentNatsControllerTest {
     private lateinit var mongoTemplate: MongoTemplate
 
     @Autowired
-    private lateinit var natsConnection:Connection
+    private lateinit var natsConnection: Connection
 
     @Autowired
     private lateinit var mapper: AssignmentNatsMapper
 
     @BeforeEach
-    fun beforeEach(){
+    fun beforeEach() {
         mongoTemplate.save(Assignment().apply {
             id = "test"
             name = "test"
@@ -51,63 +46,37 @@ class AssignmentNatsControllerTest {
 
     @Test
     fun testFindById() {
-        val expectedAssignment = AssignmentProto.Assignment.newBuilder()
-            .setId("test")
-            .setName("test")
-            .build()
-        val expectedSuccess = Success.newBuilder()
-            .setMessage("Assignment find successfully")
-            .setAssignment(expectedAssignment)
-            .build()
-        val expectedResponse = AssignmentResponse.newBuilder()
-            .setSuccess(expectedSuccess)
-            .build()
-        val expected = FindByIdAssignmentResponse.newBuilder()
-            .setResponse(expectedResponse)
-            .build()
+        val expected = FindByIdAssignmentResponse.newBuilder().apply {
+            responseBuilder.successBuilder
+                .setMessage("Assignment find successfully")
+                .assignmentBuilder
+                .setId("test")
+                .setName("test")
+        }.build()
 
-        val assignmentId = AssignmentId.newBuilder()
-            .setId("test")
-            .build()
-        val request = AssignmentRequest.newBuilder()
-            .setAssignmentId(assignmentId)
-            .build()
-        val message = FindByIdAssignmentRequest.newBuilder()
-            .setRequest(request)
-            .build()
+        val message = FindByIdAssignmentRequest.newBuilder().apply {
+            requestBuilder.assignmentIdBuilder.setId("test")
+        }.build()
 
         val future = natsConnection.request(ASSIGNMENT_BY_ID, message.toByteArray())
-        val response = future.get()
-        val result = FindByIdAssignmentResponse.parseFrom(response.data)
+        val result = FindByIdAssignmentResponse.parseFrom(future.get().data)
 
         Assertions.assertEquals(expected, result)
     }
 
     @Test
     fun deleteById() {
-        val expectedSuccess = Success.newBuilder()
-            .setMessage("Assignment deleted successfully")
-            .build()
-        val expectedResponse = AssignmentResponse.newBuilder()
-            .setSuccess(expectedSuccess)
-            .build()
-        val expected = DeleteByIdAssignmentResponse.newBuilder()
-            .setResponse(expectedResponse)
-            .build()
+        val expected = DeleteByIdAssignmentResponse.newBuilder().apply {
+            responseBuilder.successBuilder
+                .setMessage("Assignment deleted successfully")
+        }.build()
 
-        val assignmentId = AssignmentId.newBuilder()
-            .setId("test")
-            .build()
-        val request = AssignmentRequest.newBuilder()
-            .setAssignmentId(assignmentId)
-            .build()
-        val message = DeleteByIdAssignmentRequest.newBuilder()
-            .setRequest(request)
-            .build()
+        val message = DeleteByIdAssignmentRequest.newBuilder().apply {
+            requestBuilder.assignmentIdBuilder.setId("test")
+        }.build()
 
         val future = natsConnection.request(ASSIGNMENT_DELETE_BY_ID, message.toByteArray())
-        val response = future.get()
-        val result = DeleteByIdAssignmentResponse.parseFrom(response.data)
+        val result = DeleteByIdAssignmentResponse.parseFrom(future.get().data)
 
         Assertions.assertEquals(expected, result)
     }
@@ -115,23 +84,18 @@ class AssignmentNatsControllerTest {
     @Test
     fun findAll() {
         val expectedAssignments = mapper.toResponseDtoList(mongoTemplate.findAll(Assignment::class.java))
-        val expectedSuccess: Success = Success.newBuilder()
-            .setMessage("Assignments returned successfully")
-            .setAssignments(AssignmentProto.Assignments.newBuilder().addAllAssignments(expectedAssignments))
-            .build()
-        val expectedResponse = AssignmentResponse.newBuilder()
-            .setSuccess(expectedSuccess)
-            .build()
-        val expected =  FindAllAssignmentResponse.newBuilder()
-            .setResponse(expectedResponse)
-            .build()
 
-        val message = FindAllAssignmentRequest.newBuilder()
-            .build()
+        val expected = FindAllAssignmentResponse.newBuilder().apply {
+            responseBuilder.successBuilder
+                .setMessage("Assignments returned successfully")
+                .assignmentsBuilder
+                .addAllAssignments(expectedAssignments)
+        }.build()
+
+        val message = FindAllAssignmentRequest.newBuilder().build()
 
         val future = natsConnection.request(ASSIGNMENT_FIND_ALL, message.toByteArray())
-        val response = future.get()
-        val result = FindAllAssignmentResponse.parseFrom(response.data)
+        val result = FindAllAssignmentResponse.parseFrom(future.get().data)
 
         Assertions.assertEquals(expected, result)
     }
@@ -142,28 +106,21 @@ class AssignmentNatsControllerTest {
             id = "test"
             name = "test1"
         }
-        val expectedSuccess: Success = Success.newBuilder()
-            .setMessage("Assignment updated successfully")
-            .setAssignment(mapper.toResponseDto(expectedAssignment))
-            .build()
-        val expectedResponse = AssignmentResponse.newBuilder()
-            .setSuccess(expectedSuccess)
-            .build()
-        val expected = UpdateAssignmentResponse.newBuilder()
-            .setResponse(expectedResponse)
-            .build()
 
-        val request = AssignmentRequest.newBuilder().setAssignment(mapper.toResponseDto(expectedAssignment))
-        val message = UpdateAssignmentRequest.newBuilder()
-            .setRequest(request)
-            .build()
+        val expected = UpdateAssignmentResponse.newBuilder().apply {
+            responseBuilder.successBuilder
+                .setMessage("Assignment updated successfully")
+                .setAssignment(mapper.toResponseDto(expectedAssignment))
+        }.build()
+
+        val message = UpdateAssignmentRequest.newBuilder().apply {
+            requestBuilder.setAssignment(mapper.toResponseDto(expectedAssignment))
+        }.build()
 
         val future = natsConnection.request(ASSIGNMENT_UPDATE_BY_ID, message.toByteArray())
-        val response = future.get()
-        val result = UpdateAssignmentResponse.parseFrom(response.data)
+        val result = UpdateAssignmentResponse.parseFrom(future.get().data)
 
         Assertions.assertEquals(expected, result)
     }
-
 
 }

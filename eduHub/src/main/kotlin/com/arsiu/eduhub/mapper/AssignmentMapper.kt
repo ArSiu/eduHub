@@ -41,22 +41,22 @@ interface AssignmentNatsMapper {
     @Named("toEntity")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "lesson", ignore = true)
-    fun toEntity(dto: AssignmentProto.Assignment): Assignment
+    fun toEntity(dto: AssignmentProto): Assignment
 
     @Named("toEntityList")
     @IterableMapping(qualifiedByName = ["toEntity"])
-    fun toEntityList(dto: List<AssignmentProto.Assignment>): List<Assignment>
+    fun toEntityList(dto: List<AssignmentProto>): List<Assignment>
 
     @Named("toEntityUpdate")
     @Mapping(target = "lesson", ignore = true)
-    fun toEntityUpdate(dto: AssignmentProto.Assignment): Assignment
+    fun toEntityUpdate(dto: AssignmentProto): Assignment
 
     @Named("toEntityListUpdate")
     @IterableMapping(qualifiedByName = ["toEntityUpdate"])
-    fun toEntityListUpdate(dto: List<AssignmentProto.Assignment>): List<Assignment>
+    fun toEntityListUpdate(dto: List<AssignmentProto>): List<Assignment>
 
-    fun toResponseDto(assignment: Assignment): AssignmentProto.Assignment
+    fun toResponseDto(assignment: Assignment): AssignmentProto
 
-    fun toResponseDtoList(assignments: List<Assignment>): List<AssignmentProto.Assignment>
+    fun toResponseDtoList(assignments: List<Assignment>): List<AssignmentProto>
 
 }

@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 
 @Service
-class AssignmentServiceImpl (
+class AssignmentServiceImpl(
     private val assignmentRepository: AssignmentRepository,
     @Lazy
     private val lessonService: LessonService
