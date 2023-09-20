@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment;
+
+option java_multiple_files = true;
+
+import "com/arsiu/eduhub/v2/assignmentsvc/commonmodels/assignment/assignment.proto";
+
+message UpdateAssignmentRequest{
+  commonmodels.assignment.AssignmentRequest request = 1;
+}

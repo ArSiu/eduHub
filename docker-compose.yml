@@ -13,5 +13,11 @@ services:
     volumes:
       - mongo-data:/data/db
 
+  nats:
+    image: nats
+    container_name: nats
+    ports:
+      - "4222:4222"
+
 volumes:
   mongo-data:
