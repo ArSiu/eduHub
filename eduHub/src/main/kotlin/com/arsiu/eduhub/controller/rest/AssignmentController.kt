@@ -22,20 +22,21 @@ class AssignmentController(
 
     @GetMapping
     fun getAllAssignments(): List<AssignmentDtoResponse> =
-        assignmentRestMapper.toResponseDtoList(assignmentService.findAll())
+        assignmentRestMapper.toResponseDtoList(assignmentService.findAll().collectList().block()!!)
 
     @GetMapping("/{id}")
     fun getAssignmentById(@PathVariable id: String): AssignmentDtoResponse =
-        assignmentRestMapper.toResponseDto(assignmentService.findById(id))
+        assignmentRestMapper.toResponseDto(assignmentService.findById(id).block()!!)
 
     @PutMapping
     fun updateAssignmentById(@Valid @RequestBody assignment: AssignmentDtoRequest): AssignmentDtoResponse {
-        val updated = assignmentService.update(assignmentRestMapper.toEntityUpdate(assignment))
+        val updated = assignmentService.update(assignmentRestMapper.toEntityUpdate(assignment)).block()!!
         return assignmentRestMapper.toResponseDto(updated)
     }
 
     @DeleteMapping("/{id}")
-    fun deleteAssignmentById(@PathVariable id: String) =
-        assignmentService.delete(id)
+    fun deleteAssignmentById(@PathVariable id: String) {
+        assignmentService.delete(id).block()
+    }
 
 }

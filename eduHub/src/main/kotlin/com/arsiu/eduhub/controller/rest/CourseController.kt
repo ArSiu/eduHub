@@ -24,30 +24,30 @@ class CourseController(
 
     @GetMapping
     fun getAllCourses(): List<CourseDtoResponse> =
-        courseMapper.toDtoResponseList(courseService.findAll())
+        courseMapper.toDtoResponseList(courseService.findAll().collectList().block()!!)
 
     @GetMapping("/mostElements")
     fun getAllCoursesSortedByInnerElements(): List<CourseDtoResponse> =
-        courseMapper.toDtoResponseList(courseService.sortCoursesByInners())
+        courseMapper.toDtoResponseList(courseService.sortCoursesByInners().collectList().block()!!)
 
     @PostMapping
     fun createNewCourse(@Valid @RequestBody course: CourseDtoRequest): CourseDtoResponse {
-        val createdCourse: Course = courseService.create(courseMapper.toEntity(course))
+        val createdCourse: Course = courseService.create(courseMapper.toEntity(course)).block()!!
         return courseMapper.toDtoResponse(createdCourse)
     }
 
     @GetMapping("/{id}")
     fun getCourseById(@PathVariable id: String): CourseDtoResponse =
-        courseMapper.toDtoResponse(courseService.findById(id))
+        courseMapper.toDtoResponse(courseService.findById(id).block()!!)
 
     @PutMapping
     fun updateCourseById(@Valid @RequestBody course: CourseDtoRequest): CourseDtoResponse {
-        val updated = courseService.update(courseMapper.toEntityUpdate(course))
+        val updated = courseService.update(courseMapper.toEntityUpdate(course)).block()!!
         return courseMapper.toDtoResponse(updated)
     }
 
     @DeleteMapping("/{id}")
-    fun deleteCourseById(@PathVariable id: String) =
-        courseService.delete(id)
-
+    fun deleteCourseById(@PathVariable id: String) {
+        courseService.delete(id).block()
+    }
 }

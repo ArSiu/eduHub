@@ -32,8 +32,9 @@ class AssignmentNatsControllerFindAll(
             responseBuilder.successBuilder
                 .setMessage("Assignments returned successfully")
                 .assignmentsBuilder
-                .addAllAssignments(mapper.toResponseDtoList(service.findAll()))
+                .addAllAssignment(mapper.toResponseDtoList(service.findAll().collectList().block()!!))
         }.build()
+
 
     private fun getFailureResponse(exception: String, message: String): FindAllAssignmentResponse =
         FindAllAssignmentResponse.newBuilder().apply {

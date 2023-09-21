@@ -5,12 +5,10 @@ import com.arsiu.eduhub.model.enums.Role
 import com.arsiu.eduhub.service.UserService
 import com.arsiu.eduhub.service.util.mail.EmailParameters
 import com.arsiu.eduhub.service.util.mail.EmailServiceImpl
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.stereotype.Component
+import reactor.core.scheduler.Schedulers
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
@@ -48,7 +46,7 @@ class NotifyTriggerAnnotationHandlerBeanPostProcessor(
             Proxy.newProxyInstance(clazz.java.classLoader, clazz.java.interfaces) { _, method, args ->
                 try {
                     val result = method.invoke(bean, *(args ?: emptyArray()))
-                    getAnnotation(clazz, method)?.let { notifyUsers(it.value + result.toString()) }
+                    getAnnotation(clazz, method)?.let { notifyUsers(it.value) }
                     return@newProxyInstance result
                 } catch (e: InvocationTargetException) {
                     logger.error(e.targetException.toString())
@@ -62,17 +60,16 @@ class NotifyTriggerAnnotationHandlerBeanPostProcessor(
         return beanClass.memberFunctions.firstOrNull {
             (it.name == method.name)
                     &&
-                    (it.javaClass.typeParameters.contentEquals(method.javaClass.typeParameters))
+            (it.javaClass.typeParameters.contentEquals(method.javaClass.typeParameters))
         }?.findAnnotation<NotifyTrigger>()
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     private fun notifyUsers(msg: String) {
-        GlobalScope.launch {
-            userService.findAll()
-                .filter { it.role == Role.STUDENT }
-                .forEach { emailServiceImpl.sendMail(EmailParameters(it.email, msg, msg)) }
-        }
+        userService.findAll()
+            .filter { it.role == Role.STUDENT }
+            .parallel().runOn(Schedulers.boundedElastic())
+            .doOnNext { emailServiceImpl.sendMail(EmailParameters(it.email, msg, msg)) }
+            .subscribe()
     }
 
 }

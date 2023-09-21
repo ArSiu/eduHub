@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor
 import lombok.Setter
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
-import org.springframework.data.mongodb.core.mapping.DocumentReference
+import org.springframework.data.mongodb.core.mapping.Field
+import org.springframework.data.mongodb.core.mapping.FieldType.OBJECT_ID
 
 @Document("assignment")
 @NoArgsConstructor
@@ -20,8 +21,8 @@ class Assignment {
     @Id
     lateinit var id: String
 
-    @DocumentReference
-    lateinit var lesson: Lesson
+    @Field(targetType = OBJECT_ID)
+    lateinit var lessonId: String
 
     var name: String = ""
 

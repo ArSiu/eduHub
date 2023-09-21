@@ -17,12 +17,8 @@ interface UserMapper {
     @Mapping(target = "createdCourses", ignore = true)
     fun toEntity(dto: UserDtoRequest): User
 
-    @Mapping(target = "boughtCourses", source = "boughtCourses")
-    @Mapping(target = "createdCourses", source = "createdCourses")
     fun toDtoResponse(user: User): UserDtoResponse
 
-    @Mapping(target = "boughtCourses", source = "boughtCourses")
-    @Mapping(target = "createdCourses", source = "createdCourses")
     fun toDtoResponseList(users: List<User>): List<UserDtoResponse>
 
 }

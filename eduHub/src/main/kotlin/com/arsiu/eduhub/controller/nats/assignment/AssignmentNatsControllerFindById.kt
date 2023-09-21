@@ -24,7 +24,7 @@ class AssignmentNatsControllerFindById(
     override fun handler(request: FindByIdAssignmentRequest): FindByIdAssignmentResponse =
         runCatching {
             val id = request.request.assignmentId.id.toString()
-            val find = service.findById(id)
+            val find = service.findById(id).block()!!
             getSuccessResponse(mapper.toResponseDto(find))
         }.getOrElse { ex ->
             getFailureResponse(ex.javaClass.simpleName, ex.toString())

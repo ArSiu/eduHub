@@ -23,7 +23,7 @@ class AssignmentNatsControllerUpdate(
 
     override fun handler(request: UpdateAssignmentRequest): UpdateAssignmentResponse = runCatching {
         val obj = mapper.toEntityUpdate(request.request.assignment)
-        val updated = service.update(obj)
+        val updated = service.update(obj).block()!!
         getSuccessResponse(mapper.toResponseDto(updated))
     }.getOrElse { ex ->
         getFailureResponse(ex.javaClass.simpleName, ex.toString())
@@ -39,5 +39,6 @@ class AssignmentNatsControllerUpdate(
             responseBuilder.failureBuilder.setMessage("Assignment updated failed").errBuilder.setEx(exception)
                 .setMessage(message)
         }.build()
+
 
 }

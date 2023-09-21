@@ -17,7 +17,7 @@ interface CourseMapper {
     @Named("toEntity")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "students", ignore = true)
-    @Mapping(target = "owner.id", source = "ownerId")
+    @Mapping(target = "ownerId", source = "ownerId")
     @Mapping(target = "chapters", source = "chapters", qualifiedByName = ["toEntityList"])
     fun toEntity(dto: CourseDtoRequest): Course
 
@@ -27,7 +27,7 @@ interface CourseMapper {
 
     @Named("toEntityUpdate")
     @Mapping(target = "students", ignore = true)
-    @Mapping(target = "owner.id", source = "ownerId")
+    @Mapping(target = "ownerId", source = "ownerId")
     @Mapping(target = "chapters", source = "chapters", qualifiedByName = ["toEntityListUpdate"])
     fun toEntityUpdate(dto: CourseDtoRequest): Course
 
@@ -35,11 +35,11 @@ interface CourseMapper {
     @IterableMapping(qualifiedByName = ["toEntityUpdate"])
     fun toEntityListUpdate(dto: List<CourseDtoRequest>): List<Course>
 
-    @Mapping(target = "ownerId", source = "owner.id")
+    @Mapping(target = "ownerId", source = "ownerId")
     @Mapping(target = "chapters", source = "chapters")
     fun toDtoResponse(course: Course): CourseDtoResponse
 
-    @Mapping(target = "ownerId", source = "owner.id")
+    @Mapping(target = "ownerId", source = "ownerId")
     @Mapping(target = "chapters", source = "chapters")
     fun toDtoResponseList(courses: List<Course>): List<CourseDtoResponse>
 

@@ -24,26 +24,26 @@ class UserController(
 
     @GetMapping
     fun getAllUsers(): List<UserDtoResponse> =
-        userMapper.toDtoResponseList(userService.findAll())
+        userMapper.toDtoResponseList(userService.findAll().collectList().block()!!)
 
     @PostMapping
     fun createNewUser(@Valid @RequestBody user: UserDtoRequest): UserDtoResponse {
-        val createdUser: User = userService.create(userMapper.toEntity(user))
+        val createdUser: User = userService.create(userMapper.toEntity(user)).block()!!
         return userMapper.toDtoResponse(createdUser)
     }
 
     @GetMapping("/{id}")
     fun getUserById(@PathVariable id: String): UserDtoResponse =
-        userMapper.toDtoResponse(userService.findById(id))
+        userMapper.toDtoResponse(userService.findById(id).block()!!)
 
     @PutMapping
     fun updateUserById(@Valid @RequestBody user: UserDtoRequest): UserDtoResponse {
-        val updated = userService.update(userMapper.toEntity(user))
+        val updated = userService.update(userMapper.toEntity(user)).block()!!
         return userMapper.toDtoResponse(updated)
     }
 
     @DeleteMapping("/{id}")
     fun deletePostById(@PathVariable id: String) =
-        userService.delete(id)
+        userService.delete(id).block()!!
 
 }

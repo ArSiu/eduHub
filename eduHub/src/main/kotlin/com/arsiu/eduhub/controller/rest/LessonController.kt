@@ -22,20 +22,21 @@ class LessonController(
 
     @GetMapping
     fun getAllLessons(): List<LessonDtoResponse> =
-        lessonMapper.toDtoResponseList(lessonService.findAll())
+        lessonMapper.toDtoResponseList(lessonService.findAll().collectList().block()!!)
 
     @GetMapping("/{id}")
     fun getLessonById(@PathVariable id: String): LessonDtoResponse =
-        lessonMapper.toDtoResponse(lessonService.findById(id))
+        lessonMapper.toDtoResponse(lessonService.findById(id).block()!!)
 
     @PutMapping
     fun updateLessonById(@Valid @RequestBody lesson: LessonDtoRequest): LessonDtoResponse {
-        val updated = lessonService.update(lessonMapper.toEntityUpdate(lesson))
+        val updated = lessonService.update(lessonMapper.toEntityUpdate(lesson)).block()!!
         return lessonMapper.toDtoResponse(updated)
     }
 
     @DeleteMapping("/{id}")
-    fun deleteLessonById(@PathVariable id: String) =
-        lessonService.delete(id)
+    fun deleteLessonById(@PathVariable id: String) {
+        lessonService.delete(id).block()
+    }
 
 }
