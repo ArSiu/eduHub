@@ -1,4 +1,9 @@
 # EduHub
+<a href="https://github.com/ArSiu/eduHub/actions/workflows/java-build-test.yaml">
+<img src="https://github.com/ArSiu/eduHub/actions/workflows/java-build-test.yaml/badge.svg" alt="build"> 
+<br>
+</a>
+
 
 Educational Hub is an project for learning Kotlin with Spring Boot
 
