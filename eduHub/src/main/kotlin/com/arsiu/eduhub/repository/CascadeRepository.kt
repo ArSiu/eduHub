@@ -1,18 +1,24 @@
-package com.arsiu.eduhub.repository.custom
+package com.arsiu.eduhub.repository
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import java.lang.reflect.Field
 
 interface CascadeRepository<T, ID> {
     val logger: Logger
         get() = LoggerFactory.getLogger(CascadeRepository::class.java)
 
-    fun createCascade(entity: T): T
+    fun createCascade(entity: T): Mono<T>
 
-    fun updateCascade(entity: T): T
+    fun findAllCascade(): Flux<T>
 
-    fun deleteCascade(entity: T)
+    fun findByIdCascade(id: ID): Mono<T>
+
+    fun updateCascade(entity: T): Mono<T>
+
+    fun deleteCascade(entity: T): Mono<Void>
 
     fun resetField(target: Any, fieldName: String) {
         try {
@@ -23,5 +29,4 @@ interface CascadeRepository<T, ID> {
             logger.error("An error occurred while resetting the field: {}", fieldName, e)
         }
     }
-
 }

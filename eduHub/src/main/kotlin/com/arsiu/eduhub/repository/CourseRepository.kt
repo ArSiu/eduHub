@@ -1,9 +1,13 @@
 package com.arsiu.eduhub.repository
 
 import com.arsiu.eduhub.model.Course
-import com.arsiu.eduhub.repository.custom.CourseCustomRepository
-import org.springframework.data.mongodb.repository.MongoRepository
+
 import org.springframework.stereotype.Repository
+import reactor.core.publisher.Flux
 
 @Repository
-interface CourseRepository : MongoRepository<Course, String>, CourseCustomRepository
+interface CourseRepository : CascadeRepository<Course, String> {
+
+    fun sortCoursesByInners(): Flux<Course>
+
+}

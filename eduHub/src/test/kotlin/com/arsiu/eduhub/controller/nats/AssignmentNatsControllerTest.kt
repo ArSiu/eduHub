@@ -21,14 +21,14 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.data.mongodb.core.MongoTemplate
+import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 
 @SpringBootTest
 @ExtendWith(TestContainers::class)
 class AssignmentNatsControllerTest {
 
     @Autowired
-    private lateinit var mongoTemplate: MongoTemplate
+    private lateinit var mongoTemplate: ReactiveMongoTemplate
 
     @Autowired
     private lateinit var natsConnection: Connection
@@ -36,12 +36,16 @@ class AssignmentNatsControllerTest {
     @Autowired
     private lateinit var mapper: AssignmentNatsMapper
 
+    private val assignmentId = "650e90f20fefff48e6775111"
+    private val assignmentName = "test"
+
     @BeforeEach
     fun beforeEach() {
-        mongoTemplate.save(Assignment().apply {
-            id = "test"
-            name = "test"
-        })
+        val assignment = Assignment().apply {
+            id = assignmentId
+            name = assignmentName
+        }
+        mongoTemplate.save(assignment).block()
     }
 
     @Test
@@ -50,12 +54,12 @@ class AssignmentNatsControllerTest {
             responseBuilder.successBuilder
                 .setMessage("Assignment find successfully")
                 .assignmentBuilder
-                .setId("test")
-                .setName("test")
+                .setId(assignmentId)
+                .setName(assignmentName)
         }.build()
 
         val message = FindByIdAssignmentRequest.newBuilder().apply {
-            requestBuilder.assignmentIdBuilder.setId("test")
+            requestBuilder.assignmentIdBuilder.setId(assignmentId)
         }.build()
 
         val future = natsConnection.request(ASSIGNMENT_BY_ID, message.toByteArray())
@@ -72,7 +76,7 @@ class AssignmentNatsControllerTest {
         }.build()
 
         val message = DeleteByIdAssignmentRequest.newBuilder().apply {
-            requestBuilder.assignmentIdBuilder.setId("test")
+            requestBuilder.assignmentIdBuilder.setId(assignmentId)
         }.build()
 
         val future = natsConnection.request(ASSIGNMENT_DELETE_BY_ID, message.toByteArray())
@@ -83,13 +87,18 @@ class AssignmentNatsControllerTest {
 
     @Test
     fun findAll() {
-        val expectedAssignments = mapper.toResponseDtoList(mongoTemplate.findAll(Assignment::class.java))
+        val expectedAssignments = mapper.toResponseDtoList(listOf(
+            Assignment().apply {
+                id = assignmentId
+                name = assignmentName
+            }
+        ))
 
         val expected = FindAllAssignmentResponse.newBuilder().apply {
             responseBuilder.successBuilder
                 .setMessage("Assignments returned successfully")
                 .assignmentsBuilder
-                .addAllAssignments(expectedAssignments)
+                .addAllAssignment(expectedAssignments)
         }.build()
 
         val message = FindAllAssignmentRequest.newBuilder().build()
@@ -103,7 +112,7 @@ class AssignmentNatsControllerTest {
     @Test
     fun updateById() {
         val expectedAssignment = Assignment().apply {
-            id = "test"
+            id = assignmentId
             name = "test1"
         }
 

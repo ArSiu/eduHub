@@ -14,7 +14,7 @@ message AssignmentId {
 }
 
 message Assignments {
-  repeated AssignmentProto assignments = 1;
+  repeated AssignmentProto assignment = 1;
 }
 
 message AssignmentRequest {

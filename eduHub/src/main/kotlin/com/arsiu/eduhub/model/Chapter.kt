@@ -8,6 +8,8 @@ import lombok.Setter
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.DocumentReference
+import org.springframework.data.mongodb.core.mapping.Field
+import org.springframework.data.mongodb.core.mapping.FieldType.OBJECT_ID
 
 @Document("chapter")
 @NoArgsConstructor
@@ -20,8 +22,8 @@ class Chapter {
     @Id
     lateinit var id: String
 
-    @DocumentReference
-    lateinit var course: Course
+    @Field(targetType = OBJECT_ID)
+    lateinit var courseId: String
 
     @DocumentReference
     lateinit var lessons: MutableList<Lesson>

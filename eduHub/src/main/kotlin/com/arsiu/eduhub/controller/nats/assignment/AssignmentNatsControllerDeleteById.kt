@@ -21,7 +21,7 @@ class AssignmentNatsControllerDeleteById(
     override fun handler(request: DeleteByIdAssignmentRequest): DeleteByIdAssignmentResponse =
         runCatching {
             val id = request.request.assignmentId.id
-            service.delete(id)
+            service.delete(id).block()
             getSuccessResponse()
         }.getOrElse { ex ->
             getFailureResponse(ex.javaClass.simpleName, ex.toString())

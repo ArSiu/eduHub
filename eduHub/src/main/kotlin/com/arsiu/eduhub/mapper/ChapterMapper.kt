@@ -16,7 +16,7 @@ interface ChapterMapper {
 
     @Named("toEntity")
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "course", ignore = true)
+    @Mapping(target = "courseId", ignore = true)
     @Mapping(target = "lessons", source = "lessons", qualifiedByName = ["toEntityList"])
     fun toEntity(dto: ChapterDtoRequest): Chapter
 
@@ -25,7 +25,7 @@ interface ChapterMapper {
     fun toEntityList(dto: List<ChapterDtoRequest>): List<Chapter>
 
     @Named("toEntityUpdate")
-    @Mapping(target = "course", ignore = true)
+    @Mapping(target = "courseId", ignore = true)
     @Mapping(target = "lessons", source = "lessons", qualifiedByName = ["toEntityListUpdate"])
     fun toEntityUpdate(dto: ChapterDtoRequest): Chapter
 

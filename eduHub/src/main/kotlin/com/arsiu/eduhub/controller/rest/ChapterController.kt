@@ -22,20 +22,21 @@ class ChapterController(
 
     @GetMapping
     fun getAllChapters(): List<ChapterDtoResponse> =
-        chapterMapper.toDtoResponseList(chapterService.findAll())
+        chapterMapper.toDtoResponseList(chapterService.findAll().collectList().block()!!)
 
     @GetMapping("/{id}")
     fun getChapterById(@PathVariable id: String): ChapterDtoResponse =
-        chapterMapper.toDtoResponse(chapterService.findById(id))
+        chapterMapper.toDtoResponse(chapterService.findById(id).block()!!)
 
     @PutMapping
     fun updateChapterById(@Valid @RequestBody chapter: ChapterDtoRequest): ChapterDtoResponse {
-        val updated = chapterService.update(chapterMapper.toEntityUpdate(chapter))
+        val updated = chapterService.update(chapterMapper.toEntityUpdate(chapter)).block()!!
         return chapterMapper.toDtoResponse(updated)
     }
 
     @DeleteMapping("/{id}")
-    fun deleteChapterById(@PathVariable id: String) =
-        chapterService.delete(id)
+    fun deleteChapterById(@PathVariable id: String) {
+        chapterService.delete(id).block()
+    }
 
 }

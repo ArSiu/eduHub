@@ -6,7 +6,5 @@ data class UserDtoResponse(
     val id: String,
     val firstName: String,
     val secondName: String,
-    val role: Role,
-    val boughtCourses: Set<CourseDtoResponse>,
-    val createdCourses: Set<CourseDtoResponse>
+    val role: Role
 )

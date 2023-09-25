@@ -8,6 +8,8 @@ import com.arsiu.eduhub.service.CourseService
 import com.arsiu.eduhub.service.UserService
 import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 @Service
 class CourseServiceImpl(
@@ -16,27 +18,24 @@ class CourseServiceImpl(
     private val userService: UserService
 ) : CourseService {
 
-    override fun findAll(): List<Course> =
-        courseRepository.findAll().toList()
+    override fun findAll(): Flux<Course> =
+        courseRepository.findAllCascade()
 
-    override fun findById(id: String): Course =
-        courseRepository.findById(id).orElseThrow { NotFoundException("Course with ID $id not found") }
+    override fun findById(id: String): Mono<Course> =
+        courseRepository.findByIdCascade(id)
+            .switchIfEmpty(Mono.error(NotFoundException("Course with ID $id not found")))
 
     @NotifyTrigger("New Course Available ")
-    override fun create(entity: Course): Course {
-        entity.owner.id.let { entity.owner = userService.findById(it) }
-        return courseRepository.createCascade(entity)
-    }
+    override fun create(entity: Course): Mono<Course> =
+        userService.findById(entity.ownerId).then(courseRepository.createCascade(entity))
 
-    override fun update(entity: Course): Course {
-        findById(entity.id)
-        return courseRepository.updateCascade(entity)
-    }
+    override fun update(entity: Course): Mono<Course> =
+        findById(entity.id).then(courseRepository.updateCascade(entity))
 
-    override fun delete(id: String) =
-        courseRepository.deleteCascade(findById(id))
+    override fun delete(id: String): Mono<Void> =
+        findById(id).flatMap(courseRepository::deleteCascade)
 
-    override fun sortCoursesByInners(): List<Course> =
+    override fun sortCoursesByInners(): Flux<Course> =
         courseRepository.sortCoursesByInners()
 
 }
