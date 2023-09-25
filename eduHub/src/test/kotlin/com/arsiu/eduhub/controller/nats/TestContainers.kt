@@ -31,6 +31,9 @@ class TestContainers : BeforeAllCallback, AfterAllCallback {
     override fun beforeAll(context: ExtensionContext?) {
         mongoContainer.start()
         natsContainer.start()
+        System.setProperty("spring.data.mongodb.username", "root")
+        System.setProperty("spring.data.mongodb.password", "root")
+        System.setProperty("spring.data.mongodb.database", "myDb")
         System.setProperty("spring.data.mongodb.host", mongoContainer.host)
         System.setProperty("spring.data.mongodb.port", mongoContainer.getMappedPort(27017).toString())
         System.setProperty("nats.url", "nats://${natsContainer.host}:${natsContainer.getMappedPort(4222)}")
