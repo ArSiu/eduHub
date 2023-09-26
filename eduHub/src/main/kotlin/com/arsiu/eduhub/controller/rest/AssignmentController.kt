@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("/api/assignment")
@@ -21,22 +22,23 @@ class AssignmentController(
 ) {
 
     @GetMapping
-    fun getAllAssignments(): List<AssignmentDtoResponse> =
-        assignmentRestMapper.toResponseDtoList(assignmentService.findAll().collectList().block()!!)
+    fun getAllAssignments(): Mono<List<AssignmentDtoResponse>> =
+        assignmentService.findAll()
+            .collectList()
+            .map { assignments -> assignmentRestMapper.toResponseDtoList(assignments) }
 
     @GetMapping("/{id}")
-    fun getAssignmentById(@PathVariable id: String): AssignmentDtoResponse =
-        assignmentRestMapper.toResponseDto(assignmentService.findById(id).block()!!)
+    fun getAssignmentById(@PathVariable id: String): Mono<AssignmentDtoResponse> =
+        assignmentService.findById(id)
+            .map { assignment -> assignmentRestMapper.toResponseDto(assignment) }
 
     @PutMapping
-    fun updateAssignmentById(@Valid @RequestBody assignment: AssignmentDtoRequest): AssignmentDtoResponse {
-        val updated = assignmentService.update(assignmentRestMapper.toEntityUpdate(assignment)).block()!!
-        return assignmentRestMapper.toResponseDto(updated)
-    }
+    fun updateAssignmentById(@Valid @RequestBody assignment: AssignmentDtoRequest): Mono<AssignmentDtoResponse> =
+        assignmentService.update(assignmentRestMapper.toEntityUpdate(assignment))
+            .map { updated -> assignmentRestMapper.toResponseDto(updated) }
 
     @DeleteMapping("/{id}")
-    fun deleteAssignmentById(@PathVariable id: String) {
-        assignmentService.delete(id).block()
-    }
+    fun deleteAssignmentById(@PathVariable id: String): Mono<Void> =
+        assignmentService.delete(id)
 
 }

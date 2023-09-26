@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("/api/lesson")
@@ -21,22 +22,23 @@ class LessonController(
 ) {
 
     @GetMapping
-    fun getAllLessons(): List<LessonDtoResponse> =
-        lessonMapper.toDtoResponseList(lessonService.findAll().collectList().block()!!)
+    fun getAllLessons(): Mono<List<LessonDtoResponse>> =
+        lessonService.findAll()
+            .collectList()
+            .map { lessons -> lessonMapper.toDtoResponseList(lessons) }
 
     @GetMapping("/{id}")
-    fun getLessonById(@PathVariable id: String): LessonDtoResponse =
-        lessonMapper.toDtoResponse(lessonService.findById(id).block()!!)
+    fun getLessonById(@PathVariable id: String): Mono<LessonDtoResponse> =
+        lessonService.findById(id)
+            .map { lesson -> lessonMapper.toDtoResponse(lesson) }
 
     @PutMapping
-    fun updateLessonById(@Valid @RequestBody lesson: LessonDtoRequest): LessonDtoResponse {
-        val updated = lessonService.update(lessonMapper.toEntityUpdate(lesson)).block()!!
-        return lessonMapper.toDtoResponse(updated)
-    }
+    fun updateLessonById(@Valid @RequestBody lesson: LessonDtoRequest): Mono<LessonDtoResponse> =
+        lessonService.update(lessonMapper.toEntityUpdate(lesson))
+            .map { updated -> lessonMapper.toDtoResponse(updated) }
 
     @DeleteMapping("/{id}")
-    fun deleteLessonById(@PathVariable id: String) {
-        lessonService.delete(id).block()
-    }
+    fun deleteLessonById(@PathVariable id: String): Mono<Void> =
+        lessonService.delete(id)
 
 }
