@@ -5,11 +5,13 @@ import com.arsiu.eduhub.mapper.AssignmentNatsMapper
 import com.arsiu.eduhub.service.AssignmentService
 import com.arsiu.eduhub.v2.assignmentsvc.NatsSubject.ASSIGNMENT_BY_ID
 import com.arsiu.eduhub.v2.assignmentsvc.commonmodels.assignment.AssignmentProto
+import com.arsiu.eduhub.v2.assignmentsvc.commonmodels.assignment.AssignmentRequest
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.FindByIdAssignmentRequest
 import com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment.FindByIdAssignmentResponse
 import com.google.protobuf.Parser
 import io.nats.client.Connection
 import org.springframework.stereotype.Component
+import reactor.core.publisher.Mono
 
 @Component
 class AssignmentNatsControllerFindById(
@@ -19,25 +21,28 @@ class AssignmentNatsControllerFindById(
 ) : NatsController<FindByIdAssignmentRequest, FindByIdAssignmentResponse> {
 
     override val subject: String = ASSIGNMENT_BY_ID
+    override val type = FindByIdAssignmentRequest::class.java
     override val parser: Parser<FindByIdAssignmentRequest> = FindByIdAssignmentRequest.parser()
 
-    override fun handler(request: FindByIdAssignmentRequest): FindByIdAssignmentResponse =
-        runCatching {
-            val id = request.request.assignmentId.id.toString()
-            val find = service.findById(id).block()!!
-            getSuccessResponse(mapper.toResponseDto(find))
-        }.getOrElse { ex ->
-            getFailureResponse(ex.javaClass.simpleName, ex.toString())
-        }
+    override fun handler(request: FindByIdAssignmentRequest): Mono<FindByIdAssignmentResponse> {
 
-    private fun getSuccessResponse(obj: AssignmentProto): FindByIdAssignmentResponse =
+        val assignmentRequest = request.request
+
+        return when (assignmentRequest.requestCase) {
+            AssignmentRequest.RequestCase.ASSIGNMENT_ID -> processFind(assignmentRequest)
+            AssignmentRequest.RequestCase.ASSIGNMENT -> unsupportedRequestTypeResponse()
+            AssignmentRequest.RequestCase.REQUEST_NOT_SET -> noRequestTypeSetResponse()
+        }
+    }
+
+    private fun successResponse(obj: AssignmentProto): FindByIdAssignmentResponse =
         FindByIdAssignmentResponse.newBuilder().apply {
             responseBuilder.successBuilder
                 .setAssignment(obj)
-                .setMessage("Assignment find successfully")
+                .setMessage("Assignment found successfully")
         }.build()
 
-    private fun getFailureResponse(exception: String, message: String): FindByIdAssignmentResponse =
+    override fun failureResponse(exception: String, message: String): FindByIdAssignmentResponse =
         FindByIdAssignmentResponse.newBuilder().apply {
             responseBuilder.failureBuilder
                 .setMessage("Assignment find failed")
@@ -45,5 +50,22 @@ class AssignmentNatsControllerFindById(
                 .setEx(exception)
                 .setMessage(message)
         }.build()
+
+    private fun unsupportedRequestTypeResponse(): Mono<FindByIdAssignmentResponse> =
+        Mono.just(
+            failureResponse("UnsupportedRequestType", "AssignmentProto is not supported for search")
+        )
+
+    private fun noRequestTypeSetResponse(): Mono<FindByIdAssignmentResponse> =
+        Mono.just(
+            failureResponse("InvalidRequest", "No request type set within AssignmentRequest")
+        )
+
+    private fun processFind(assignmentRequest: AssignmentRequest): Mono<FindByIdAssignmentResponse> =
+        service.findById(assignmentRequest.assignmentId.id.toString())
+            .map { successResponse(mapper.toResponseDto(it)) }
+            .onErrorResume {
+                Mono.just(failureResponse(it.javaClass.simpleName, it.message ?: "Unknown error"))
+            }
 
 }

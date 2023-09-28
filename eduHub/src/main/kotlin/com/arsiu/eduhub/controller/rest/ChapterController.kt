@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("/api/chapter")
@@ -21,22 +22,23 @@ class ChapterController(
 ) {
 
     @GetMapping
-    fun getAllChapters(): List<ChapterDtoResponse> =
-        chapterMapper.toDtoResponseList(chapterService.findAll().collectList().block()!!)
+    fun getAllChapters(): Mono<List<ChapterDtoResponse>> =
+        chapterService.findAll()
+            .collectList()
+            .map { chapters -> chapterMapper.toDtoResponseList(chapters) }
 
     @GetMapping("/{id}")
-    fun getChapterById(@PathVariable id: String): ChapterDtoResponse =
-        chapterMapper.toDtoResponse(chapterService.findById(id).block()!!)
+    fun getChapterById(@PathVariable id: String): Mono<ChapterDtoResponse> =
+        chapterService.findById(id)
+            .map { chapter -> chapterMapper.toDtoResponse(chapter) }
 
     @PutMapping
-    fun updateChapterById(@Valid @RequestBody chapter: ChapterDtoRequest): ChapterDtoResponse {
-        val updated = chapterService.update(chapterMapper.toEntityUpdate(chapter)).block()!!
-        return chapterMapper.toDtoResponse(updated)
-    }
+    fun updateChapterById(@Valid @RequestBody chapter: ChapterDtoRequest): Mono<ChapterDtoResponse> =
+        chapterService.update(chapterMapper.toEntityUpdate(chapter))
+            .map { updated -> chapterMapper.toDtoResponse(updated) }
 
     @DeleteMapping("/{id}")
-    fun deleteChapterById(@PathVariable id: String) {
-        chapterService.delete(id).block()
-    }
+    fun deleteChapterById(@PathVariable id: String): Mono<Void> =
+        chapterService.delete(id)
 
 }

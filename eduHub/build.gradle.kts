@@ -4,46 +4,58 @@ object Versions {
     const val mapstruct = "1.5.5.Final"
     const val springdoc = "2.1.0"
     const val lombok = "1.18.28"
+    const val protobuf = "3.24.2"
+    const val testcontainers = "1.19.0"
+    const val jupiter = "5.8.1"
+    const val jnats = "2.16.14"
 }
 
 plugins {
     id("org.springframework.boot")
     id("io.spring.dependency-management")
-    id("com.google.protobuf")
     id("io.gitlab.arturbosch.detekt")
     kotlin("jvm")
     kotlin("kapt")
     kotlin("plugin.spring")
-    kotlin("plugin.lombok") version "1.9.10"
-    id("io.freefair.lombok") version "8.1.0"
+    kotlin("plugin.lombok")
+    id("io.freefair.lombok")
 }
 
 dependencies {
+    // Spring Boot
+    implementation("org.springframework.boot:spring-boot-starter-tomcat")
+    implementation("org.springframework.boot:spring-boot-starter-webflux") {
+        exclude(group = "org.springframework.boot", module = "spring-boot-starter-reactor-netty")
+    }
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
+
+    // Kotlin & Protobuf
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
+    implementation("com.google.protobuf:protobuf-java:${Versions.protobuf}")
 
-    implementation(project(":natsSubjects"))
-    implementation("io.nats:jnats:2.16.14")
-    implementation("com.google.protobuf:protobuf-java:3.24.2")
-
+    // MapStruct & Lombok
     implementation("org.mapstruct:mapstruct:${Versions.mapstruct}")
     kapt("org.mapstruct:mapstruct-processor:${Versions.mapstruct}")
     implementation("org.projectlombok:lombok:${Versions.lombok}")
     kapt("org.projectlombok:lombok:${Versions.lombok}")
 
-    api("org.springdoc:springdoc-openapi-starter-webmvc-ui:${Versions.springdoc}")
+    // Nats
+    implementation(project(":natsSubjects"))
+    implementation("io.nats:jnats:${Versions.jnats}")
+
+    // Testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.testcontainers:testcontainers:${Versions.testcontainers}")
+    testImplementation("org.testcontainers:junit-jupiter:${Versions.testcontainers}")
+    testImplementation("org.testcontainers:mongodb:${Versions.testcontainers}")
+    testImplementation("org.junit.jupiter:junit-jupiter:${Versions.jupiter}")
 
-    testImplementation("org.testcontainers:testcontainers:1.19.0")
-    testImplementation("org.testcontainers:junit-jupiter:1.19.0")
-    testImplementation("org.testcontainers:mongodb:1.19.0")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
-
+    //other
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${Versions.springdoc}")
 }
 
 tasks.withType<KotlinCompile> {

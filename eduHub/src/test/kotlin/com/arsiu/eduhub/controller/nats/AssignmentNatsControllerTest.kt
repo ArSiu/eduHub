@@ -14,6 +14,7 @@ import com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment.DeleteByIdAs
 import com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment.FindAllAssignmentResponse
 import com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment.FindByIdAssignmentResponse
 import com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment.UpdateAssignmentResponse
+import com.google.protobuf.Any
 import io.nats.client.Connection
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -52,7 +53,7 @@ class AssignmentNatsControllerTest {
     fun testFindById() {
         val expected = FindByIdAssignmentResponse.newBuilder().apply {
             responseBuilder.successBuilder
-                .setMessage("Assignment find successfully")
+                .setMessage("Assignment found successfully")
                 .assignmentBuilder
                 .setId(assignmentId)
                 .setName(assignmentName)
@@ -62,7 +63,7 @@ class AssignmentNatsControllerTest {
             requestBuilder.assignmentIdBuilder.setId(assignmentId)
         }.build()
 
-        val future = natsConnection.request(ASSIGNMENT_BY_ID, message.toByteArray())
+        val future = natsConnection.request(ASSIGNMENT_BY_ID, Any.pack(message).toByteArray())
         val result = FindByIdAssignmentResponse.parseFrom(future.get().data)
 
         Assertions.assertEquals(expected, result)
@@ -79,7 +80,7 @@ class AssignmentNatsControllerTest {
             requestBuilder.assignmentIdBuilder.setId(assignmentId)
         }.build()
 
-        val future = natsConnection.request(ASSIGNMENT_DELETE_BY_ID, message.toByteArray())
+        val future = natsConnection.request(ASSIGNMENT_DELETE_BY_ID, Any.pack(message).toByteArray())
         val result = DeleteByIdAssignmentResponse.parseFrom(future.get().data)
 
         Assertions.assertEquals(expected, result)
@@ -103,7 +104,7 @@ class AssignmentNatsControllerTest {
 
         val message = FindAllAssignmentRequest.newBuilder().build()
 
-        val future = natsConnection.request(ASSIGNMENT_FIND_ALL, message.toByteArray())
+        val future = natsConnection.request(ASSIGNMENT_FIND_ALL, Any.pack(message).toByteArray())
         val result = FindAllAssignmentResponse.parseFrom(future.get().data)
 
         Assertions.assertEquals(expected, result)
@@ -126,7 +127,8 @@ class AssignmentNatsControllerTest {
             requestBuilder.setAssignment(mapper.toResponseDto(expectedAssignment))
         }.build()
 
-        val future = natsConnection.request(ASSIGNMENT_UPDATE_BY_ID, message.toByteArray())
+        val future = natsConnection.request(ASSIGNMENT_UPDATE_BY_ID, Any.pack(message).toByteArray())
+
         val result = UpdateAssignmentResponse.parseFrom(future.get().data)
 
         Assertions.assertEquals(expected, result)
