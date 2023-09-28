@@ -36,5 +36,4 @@ class NatsControllerBeanPostProcessor : BeanPostProcessor {
         }.subscribe(subject)
     }
 
-
 }
