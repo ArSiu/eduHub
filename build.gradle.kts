@@ -1,7 +1,14 @@
+object Versions {
+    const val grpc = "1.58.0"
+    const val rgrpc = "1.2.4"
+    const val reactor = "3.5.10"
+    const val protobufjava = "3.24.2"
+}
+
 plugins {
     id("org.springframework.boot") version "3.1.3" apply false
     id("io.spring.dependency-management") version "1.1.3" apply false
-    id("com.google.protobuf") version "0.9.4" apply false
+    id("com.google.protobuf") version "0.9.4"
     id("io.gitlab.arturbosch.detekt") version "1.23.1" apply false
     id("io.freefair.lombok") version "8.1.0" apply false
     kotlin("jvm") version "1.9.0"
@@ -22,4 +29,24 @@ allprojects {
 subprojects {
     apply(plugin = "kotlin")
     apply(plugin = "com.google.protobuf")
+
+    dependencies {
+        implementation("io.projectreactor:reactor-core:${Versions.reactor}")
+
+        implementation("io.grpc:grpc-core:${Versions.grpc}")
+        implementation("io.grpc:grpc-census:${Versions.grpc}")
+        implementation("io.grpc:grpc-protobuf:${Versions.grpc}")
+        implementation("io.grpc:grpc-netty:${Versions.grpc}")
+        implementation("io.grpc:grpc-stub:${Versions.grpc}")
+
+        implementation("com.salesforce.servicelibs:reactor-grpc:${Versions.rgrpc}")
+        implementation("com.salesforce.servicelibs:reactive-grpc-common:${Versions.rgrpc}")
+        implementation("com.salesforce.servicelibs:reactor-grpc-stub:${Versions.rgrpc}")
+
+        implementation("com.google.protobuf:protobuf-java:${Versions.protobufjava}")
+
+        testImplementation ("io.grpc:grpc-testing:${Versions.grpc}")
+
+        testImplementation("io.projectreactor:reactor-test:${Versions.reactor}")
+    }
 }

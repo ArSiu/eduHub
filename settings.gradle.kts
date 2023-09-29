@@ -2,5 +2,5 @@ rootProject.name = "root"
 
 include(
     "eduHub",
-    "natsSubjects"
+    "proto"
 )

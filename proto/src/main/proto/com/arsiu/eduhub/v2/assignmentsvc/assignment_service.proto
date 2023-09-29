@@ -1,0 +1,26 @@
+
+package com.arsiu.eduhub.v2.assignmentsvc;
+
+import "com/arsiu/eduhub/v2/assignmentsvc/input/reqreply/assignment/find_all_assignment.proto";
+import "com/arsiu/eduhub/v2/assignmentsvc/output/reqreply/assignment/find_all_assignment_stream.proto";
+import "com/arsiu/eduhub/v2/assignmentsvc/input/reqreply/assignment/find_by_id_assignment.proto";
+import "com/arsiu/eduhub/v2/assignmentsvc/output/reqreply/assignment/find_by_id_assignment.proto";
+import "com/arsiu/eduhub/v2/assignmentsvc/input/reqreply/assignment/update_assignment.proto";
+import "com/arsiu/eduhub/v2/assignmentsvc/output/reqreply/assignment/update_assignment.proto";
+import "com/arsiu/eduhub/v2/assignmentsvc/input/reqreply/assignment/delete_dy_id_assignment.proto";
+import "com/arsiu/eduhub/v2/assignmentsvc/output/reqreply/assignment/delete_dy_id_assignment.proto";
+
+service AssignmentService {
+
+  rpc findAll(input.reqreply.assignment.FindAllAssignmentRequest)
+      returns (stream output.reqreply.assignment.FindAllAssignmentStreamResponse);
+
+  rpc findById(input.reqreply.assignment.FindByIdAssignmentRequest)
+      returns (output.reqreply.assignment.FindByIdAssignmentResponse);
+
+  rpc update(input.reqreply.assignment.UpdateAssignmentRequest)
+      returns (output.reqreply.assignment.UpdateAssignmentResponse);
+
+  rpc deleteById(input.reqreply.assignment.DeleteByIdAssignmentRequest)
+      returns (output.reqreply.assignment.DeleteByIdAssignmentResponse);
+}
