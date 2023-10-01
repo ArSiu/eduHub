@@ -2,11 +2,8 @@ package com.arsiu.eduhub.grcp
 
 import com.arsiu.eduhub.base.BaseAssignmentTest
 import com.arsiu.eduhub.model.Assignment
-import com.arsiu.eduhub.protobuf.handlers.assignment.AssignmentHandler
 import com.arsiu.eduhub.testcontainers.TestContainers
 import com.arsiu.eduhub.v2.assignmentsvc.ReactorAssignmentServiceGrpc
-import com.arsiu.eduhub.v2.assignmentsvc.commonmodels.assignment.AssignmentRequest
-import com.arsiu.eduhub.v2.assignmentsvc.commonmodels.assignment.AssignmentResponse
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.DeleteByIdAssignmentRequest
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.FindAllAssignmentRequest
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.FindByIdAssignmentRequest
@@ -21,7 +18,6 @@ import org.junit.Rule
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
@@ -49,7 +45,7 @@ class AssignmentGrpcServiceTest : BaseAssignmentTest() {
 
         val zipped = Flux.zip(expected, response)
         StepVerifier.create(zipped)
-            .consumeNextWith { Assertions.assertEquals(it.t1, it.t2) }
+            .assertNext { Assertions.assertEquals(it.t1, it.t2) }
             .expectComplete()
             .verify()
     }
@@ -60,7 +56,7 @@ class AssignmentGrpcServiceTest : BaseAssignmentTest() {
         val response = grpcService.findById(message)
 
         StepVerifier.create(response)
-            .expectNextMatches { actualResponse -> expected == actualResponse }
+            .assertNext { actualResponse -> Assertions.assertEquals(expected, actualResponse) }
             .verifyComplete()
     }
 
@@ -70,7 +66,7 @@ class AssignmentGrpcServiceTest : BaseAssignmentTest() {
         val response = grpcService.update(message)
 
         StepVerifier.create(response)
-            .expectNextMatches { actualResponse -> expected == actualResponse }
+            .assertNext { actualResponse -> Assertions.assertEquals(expected, actualResponse) }
             .verifyComplete()
     }
 
@@ -80,7 +76,7 @@ class AssignmentGrpcServiceTest : BaseAssignmentTest() {
         val response = grpcService.deleteById(message)
 
         StepVerifier.create(response)
-            .expectNextMatches { actualResponse -> expected == actualResponse }
+            .assertNext { actualResponse -> Assertions.assertEquals(expected, actualResponse) }
             .verifyComplete()
     }
 

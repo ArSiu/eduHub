@@ -1,7 +1,6 @@
 package com.arsiu.eduhub.controller.nats.assignment
 
 import com.arsiu.eduhub.controller.nats.NatsController
-import com.arsiu.eduhub.protobuf.handlers.assignment.AssignmentHandler
 import com.arsiu.eduhub.protobuf.handlers.assignment.FindAllHandler
 import com.arsiu.eduhub.v2.assignmentsvc.NatsSubject.ASSIGNMENT_FIND_ALL
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.FindAllAssignmentRequest

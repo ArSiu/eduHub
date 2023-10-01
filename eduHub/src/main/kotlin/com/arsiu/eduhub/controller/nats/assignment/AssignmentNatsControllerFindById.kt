@@ -1,10 +1,8 @@
 package com.arsiu.eduhub.controller.nats.assignment
 
 import com.arsiu.eduhub.controller.nats.NatsController
-import com.arsiu.eduhub.protobuf.handlers.assignment.AssignmentHandler
 import com.arsiu.eduhub.protobuf.handlers.assignment.FindByIdHandler
 import com.arsiu.eduhub.v2.assignmentsvc.NatsSubject.ASSIGNMENT_BY_ID
-import com.arsiu.eduhub.v2.assignmentsvc.commonmodels.assignment.AssignmentRequest
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.FindByIdAssignmentRequest
 import com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment.FindByIdAssignmentResponse
 import com.google.protobuf.Parser

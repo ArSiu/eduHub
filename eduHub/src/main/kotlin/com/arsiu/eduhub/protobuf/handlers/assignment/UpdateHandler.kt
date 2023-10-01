@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono
 class UpdateHandler(
     private val service: AssignmentService,
     private val mapper: AssignmentNatsMapper
-): AssignmentHandler<UpdateAssignmentRequest, UpdateAssignmentResponse>() {
+) : AssignmentHandler<UpdateAssignmentRequest, UpdateAssignmentResponse>() {
 
     fun handleUpdate(request: Mono<UpdateAssignmentRequest>): Mono<UpdateAssignmentResponse> =
         request.flatMap {

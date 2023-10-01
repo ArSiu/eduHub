@@ -1,13 +1,10 @@
 package com.arsiu.eduhub.grpc.service
 
-import com.arsiu.eduhub.protobuf.handlers.assignment.AssignmentHandler
 import com.arsiu.eduhub.protobuf.handlers.assignment.DeleteByIdHandler
 import com.arsiu.eduhub.protobuf.handlers.assignment.FindAllStreamHandler
 import com.arsiu.eduhub.protobuf.handlers.assignment.FindByIdHandler
 import com.arsiu.eduhub.protobuf.handlers.assignment.UpdateHandler
 import com.arsiu.eduhub.v2.assignmentsvc.ReactorAssignmentServiceGrpc.AssignmentServiceImplBase
-import com.arsiu.eduhub.v2.assignmentsvc.commonmodels.assignment.AssignmentRequest
-import com.arsiu.eduhub.v2.assignmentsvc.commonmodels.assignment.AssignmentResponse
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.DeleteByIdAssignmentRequest
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.FindAllAssignmentRequest
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.FindByIdAssignmentRequest
@@ -25,7 +22,7 @@ class AssignmentServiceGrpcImpl(
     private val findAllStreamHandler: FindAllStreamHandler,
     private val findByIdHandler: FindByIdHandler,
     private val updateHandler: UpdateHandler,
-    private val deleteByIdHandler : DeleteByIdHandler
+    private val deleteByIdHandler: DeleteByIdHandler
 ) : AssignmentServiceImplBase() {
 
     override fun findAll(request: Mono<FindAllAssignmentRequest>): Flux<FindAllAssignmentStreamResponse> =

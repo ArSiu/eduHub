@@ -1,16 +1,12 @@
 package com.arsiu.eduhub.controller.nats.assignment
 
 import com.arsiu.eduhub.controller.nats.NatsController
-import com.arsiu.eduhub.protobuf.handlers.Handler
-import com.arsiu.eduhub.protobuf.handlers.assignment.AssignmentHandler
 import com.arsiu.eduhub.protobuf.handlers.assignment.UpdateHandler
 import com.arsiu.eduhub.v2.assignmentsvc.NatsSubject.ASSIGNMENT_UPDATE_BY_ID
-import com.arsiu.eduhub.v2.assignmentsvc.commonmodels.assignment.AssignmentRequest
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.UpdateAssignmentRequest
 import com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment.UpdateAssignmentResponse
 import com.google.protobuf.Parser
 import io.nats.client.Connection
-import org.springframework.data.mongodb.core.query.Update
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 

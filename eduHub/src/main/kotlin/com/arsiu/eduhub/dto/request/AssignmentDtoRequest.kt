@@ -14,4 +14,4 @@ data class AssignmentDtoRequest(
     @field:NotEmpty(message = "name is required")
     val name: String,
 
-)
+    )

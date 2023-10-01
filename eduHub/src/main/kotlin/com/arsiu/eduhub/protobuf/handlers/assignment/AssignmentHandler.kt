@@ -5,9 +5,9 @@ import com.arsiu.eduhub.v2.assignmentsvc.commonmodels.assignment.AssignmentRespo
 import com.google.protobuf.GeneratedMessageV3
 import reactor.core.publisher.Mono
 
-open class AssignmentHandler<ReqT : GeneratedMessageV3, RepT : GeneratedMessageV3>: Handler<ReqT,RepT>{
+open class AssignmentHandler<ReqT : GeneratedMessageV3, RepT : GeneratedMessageV3> : Handler<ReqT, RepT> {
 
-     override fun failureResponse(exception: String, message: String): RepT =
+    override fun failureResponse(exception: String, message: String): RepT =
         AssignmentResponse.newBuilder().apply {
             failureBuilder
                 .setMessage(message)

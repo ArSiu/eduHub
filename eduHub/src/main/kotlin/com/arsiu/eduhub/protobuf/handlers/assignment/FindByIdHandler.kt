@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono
 class FindByIdHandler(
     private val service: AssignmentService,
     private val mapper: AssignmentNatsMapper
-): AssignmentHandler<FindByIdAssignmentRequest, FindByIdAssignmentResponse>(){
+) : AssignmentHandler<FindByIdAssignmentRequest, FindByIdAssignmentResponse>() {
 
     fun handleFindById(request: Mono<FindByIdAssignmentRequest>): Mono<FindByIdAssignmentResponse> =
         request.flatMap {

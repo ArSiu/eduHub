@@ -2,16 +2,11 @@ package com.arsiu.eduhub.controller.nats
 
 import com.arsiu.eduhub.base.BaseAssignmentTest
 import com.arsiu.eduhub.model.Assignment
-import com.arsiu.eduhub.protobuf.handlers.assignment.AssignmentHandler
-import com.arsiu.eduhub.protobuf.handlers.assignment.DeleteByIdHandler
-import com.arsiu.eduhub.protobuf.handlers.assignment.UpdateHandler
 import com.arsiu.eduhub.testcontainers.TestContainers
 import com.arsiu.eduhub.v2.assignmentsvc.NatsSubject.ASSIGNMENT_BY_ID
 import com.arsiu.eduhub.v2.assignmentsvc.NatsSubject.ASSIGNMENT_DELETE_BY_ID
 import com.arsiu.eduhub.v2.assignmentsvc.NatsSubject.ASSIGNMENT_FIND_ALL
 import com.arsiu.eduhub.v2.assignmentsvc.NatsSubject.ASSIGNMENT_UPDATE_BY_ID
-import com.arsiu.eduhub.v2.assignmentsvc.commonmodels.assignment.AssignmentRequest
-import com.arsiu.eduhub.v2.assignmentsvc.commonmodels.assignment.AssignmentResponse
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.DeleteByIdAssignmentRequest
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.FindAllAssignmentRequest
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.FindByIdAssignmentRequest
@@ -73,7 +68,7 @@ class AssignmentNatsControllerTest : BaseAssignmentTest() {
     private fun createExpectedAndMessageForFindAll(): Pair<FindAllAssignmentResponse?, FindAllAssignmentRequest> {
         val expected = service.findAll().collectList().block()?.let { findAllHandler.successFindAllResponse(it) }
 
-        val message = FindAllAssignmentRequest.newBuilder().build()
+        val message = FindAllAssignmentRequest.getDefaultInstance()
 
         return Pair(expected, message)
     }

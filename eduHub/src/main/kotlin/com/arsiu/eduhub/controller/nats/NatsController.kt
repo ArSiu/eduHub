@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono
  * @param ReqT The type of the request message which should be a Protocol Buffers message.
  * @param RepT The type of the reply message which should also be a Protocol Buffers message.
  */
-interface NatsController<ReqT : GeneratedMessageV3, RepT : GeneratedMessageV3 , H : Handler<ReqT, RepT>> {
+interface NatsController<ReqT : GeneratedMessageV3, RepT : GeneratedMessageV3, H : Handler<ReqT, RepT>> {
 
     /**
      * Represents the NATS connection which is utilized for communication with NATS servers.

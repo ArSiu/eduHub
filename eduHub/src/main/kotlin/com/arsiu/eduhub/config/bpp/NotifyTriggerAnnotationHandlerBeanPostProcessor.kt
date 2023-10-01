@@ -60,7 +60,7 @@ class NotifyTriggerAnnotationHandlerBeanPostProcessor(
         return beanClass.memberFunctions.firstOrNull {
             (it.name == method.name)
                     &&
-            (it.javaClass.typeParameters.contentEquals(method.javaClass.typeParameters))
+                    (it.javaClass.typeParameters.contentEquals(method.javaClass.typeParameters))
         }?.findAnnotation<NotifyTrigger>()
     }
 

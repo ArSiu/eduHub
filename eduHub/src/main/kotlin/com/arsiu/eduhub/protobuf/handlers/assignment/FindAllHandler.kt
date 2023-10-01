@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono
 class FindAllHandler(
     private val service: AssignmentService,
     private val mapper: AssignmentNatsMapper
-): AssignmentHandler<FindAllAssignmentRequest,FindAllAssignmentResponse>() {
+) : AssignmentHandler<FindAllAssignmentRequest, FindAllAssignmentResponse>() {
 
     @Suppress("UnusedParameter")
     fun handleFindAll(request: Mono<FindAllAssignmentRequest>): Mono<FindAllAssignmentResponse> =

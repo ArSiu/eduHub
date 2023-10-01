@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono
 class FindAllStreamHandler(
     private val service: AssignmentService,
     private val mapper: AssignmentNatsMapper
-): AssignmentHandler<FindAllAssignmentRequest, FindAllAssignmentStreamResponse>() {
+) : AssignmentHandler<FindAllAssignmentRequest, FindAllAssignmentStreamResponse>() {
 
     fun handleFindAll(request: Mono<FindAllAssignmentRequest>): Flux<FindAllAssignmentStreamResponse> =
         findAllStream(request)

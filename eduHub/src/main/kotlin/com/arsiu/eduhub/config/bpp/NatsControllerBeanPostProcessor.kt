@@ -18,7 +18,7 @@ class NatsControllerBeanPostProcessor : BeanPostProcessor {
         return bean
     }
 
-    private fun <ReqT : GeneratedMessageV3, RepT : GeneratedMessageV3, H: Handler<ReqT, RepT>>
+    private fun <ReqT : GeneratedMessageV3, RepT : GeneratedMessageV3, H : Handler<ReqT, RepT>>
             NatsController<ReqT, RepT, H>.initializeNatsController() {
         connection.createDispatcher { message ->
             val any = com.google.protobuf.Any.parseFrom(message.data)
