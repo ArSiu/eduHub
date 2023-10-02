@@ -26,15 +26,16 @@ class AssignmentServiceGrpcImpl(
 ) : AssignmentServiceImplBase() {
 
     override fun findAll(request: Mono<FindAllAssignmentRequest>): Flux<FindAllAssignmentStreamResponse> =
-        findAllStreamHandler.handleFindAll(request)
+        request.flatMapMany { findAllStreamHandler.handleFindAll(it) }
 
     override fun findById(request: Mono<FindByIdAssignmentRequest>): Mono<FindByIdAssignmentResponse> =
-        findByIdHandler.handleFindById(request)
+        request.flatMap { findByIdHandler.handleFindById(it) }
 
     override fun update(request: Mono<UpdateAssignmentRequest>): Mono<UpdateAssignmentResponse> =
-        updateHandler.handleUpdate(request)
+        request.flatMap { updateHandler.handleUpdate(it) }
 
     override fun deleteById(request: Mono<DeleteByIdAssignmentRequest>): Mono<DeleteByIdAssignmentResponse> =
-        deleteByIdHandler.handleDelete(request)
+        request.flatMap { deleteByIdHandler.handleDelete(it) }
+
 
 }

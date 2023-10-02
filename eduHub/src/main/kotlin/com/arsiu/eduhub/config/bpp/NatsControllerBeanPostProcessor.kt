@@ -5,7 +5,6 @@ import com.arsiu.eduhub.protobuf.handlers.Handler
 import com.google.protobuf.GeneratedMessageV3
 import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.stereotype.Component
-import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 
 @Component
@@ -31,7 +30,7 @@ class NatsControllerBeanPostProcessor : BeanPostProcessor {
                     ).toByteArray()
                 )
             } else {
-                handle(Mono.just(parser.parseFrom(any.unpack(type).toByteArray())))
+                handle(parser.parseFrom(any.unpack(type).toByteArray()))
                     .subscribeOn(Schedulers.boundedElastic())
                     .publishOn(Schedulers.boundedElastic())
                     .map { it.toByteArray() }

@@ -15,22 +15,19 @@ class FindByIdHandler(
     private val mapper: AssignmentNatsMapper
 ) : AssignmentHandler<FindByIdAssignmentRequest, FindByIdAssignmentResponse>() {
 
-    fun handleFindById(request: Mono<FindByIdAssignmentRequest>): Mono<FindByIdAssignmentResponse> =
-        request.flatMap {
-            when (it.request.requestCase) {
-                AssignmentRequest.RequestCase.ASSIGNMENT_ID -> findById(request)
-                AssignmentRequest.RequestCase.ASSIGNMENT -> unsupportedRequestTypeResponse()
-                AssignmentRequest.RequestCase.REQUEST_NOT_SET -> noRequestTypeSetResponse()
-            }
+    fun handleFindById(request: FindByIdAssignmentRequest): Mono<FindByIdAssignmentResponse> =
+        when (request.request.requestCase) {
+            AssignmentRequest.RequestCase.ASSIGNMENT_ID -> findById(request)
+            AssignmentRequest.RequestCase.ASSIGNMENT -> unsupportedRequestTypeResponse()
+            AssignmentRequest.RequestCase.REQUEST_NOT_SET -> noRequestTypeSetResponse()
         }
 
-    fun findById(request: Mono<FindByIdAssignmentRequest>): Mono<FindByIdAssignmentResponse> =
-        request.flatMap {
-            service.findById(it.request.assignmentId.id)
-                .map { assignment -> successFindByIdResponse(assignment) }
-        }.doOnError { ex ->
-            failureResponse(ex.javaClass.simpleName, ex.message ?: "Unknown error")
-        }
+    fun findById(request: FindByIdAssignmentRequest): Mono<FindByIdAssignmentResponse> =
+        service.findById(request.request.assignmentId.id)
+            .map { assignment -> successFindByIdResponse(assignment) }
+            .doOnError { ex ->
+                failureResponse(ex.javaClass.simpleName, ex.message ?: "Unknown error")
+            }
 
     fun successFindByIdResponse(assignment: Assignment): FindByIdAssignmentResponse =
         FindByIdAssignmentResponse.newBuilder().apply {

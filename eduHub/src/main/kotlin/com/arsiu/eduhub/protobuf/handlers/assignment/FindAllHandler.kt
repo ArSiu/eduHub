@@ -15,7 +15,7 @@ class FindAllHandler(
 ) : AssignmentHandler<FindAllAssignmentRequest, FindAllAssignmentResponse>() {
 
     @Suppress("UnusedParameter")
-    fun handleFindAll(request: Mono<FindAllAssignmentRequest>): Mono<FindAllAssignmentResponse> =
+    fun handleFindAll(request: FindAllAssignmentRequest): Mono<FindAllAssignmentResponse> =
         findAll()
 
     fun findAll(): Mono<FindAllAssignmentResponse> =

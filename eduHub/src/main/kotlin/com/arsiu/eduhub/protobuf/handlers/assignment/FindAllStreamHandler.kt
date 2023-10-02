@@ -7,7 +7,6 @@ import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.FindAllAssign
 import com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment.FindAllAssignmentStreamResponse
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
 
 @Component
 class FindAllStreamHandler(
@@ -15,16 +14,16 @@ class FindAllStreamHandler(
     private val mapper: AssignmentNatsMapper
 ) : AssignmentHandler<FindAllAssignmentRequest, FindAllAssignmentStreamResponse>() {
 
-    fun handleFindAll(request: Mono<FindAllAssignmentRequest>): Flux<FindAllAssignmentStreamResponse> =
+    fun handleFindAll(request: FindAllAssignmentRequest): Flux<FindAllAssignmentStreamResponse> =
         findAllStream(request)
 
-    fun findAllStream(request: Mono<FindAllAssignmentRequest>): Flux<FindAllAssignmentStreamResponse> =
-        request.thenMany(
-            service.findAll()
-                .map { assignment -> successFindAllStreamResponse(assignment) }
-        ).doOnError { ex ->
-            failureResponse(ex.javaClass.simpleName, ex.message ?: "Unknown error")
-        }
+    @Suppress("UnusedParameter")
+    fun findAllStream(request: FindAllAssignmentRequest): Flux<FindAllAssignmentStreamResponse> =
+        service.findAll()
+            .map { assignment -> successFindAllStreamResponse(assignment) }
+            .doOnError { ex ->
+                failureResponse(ex.javaClass.simpleName, ex.message ?: "Unknown error")
+            }
 
     fun successFindAllStreamResponse(assignment: Assignment): FindAllAssignmentStreamResponse =
         FindAllAssignmentStreamResponse.newBuilder().apply {

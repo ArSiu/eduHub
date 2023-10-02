@@ -20,7 +20,7 @@ class AssignmentNatsControllerUpdate(
     override val type = UpdateAssignmentRequest::class.java
     override val parser: Parser<UpdateAssignmentRequest> = UpdateAssignmentRequest.parser()
 
-    override fun handle(request: Mono<UpdateAssignmentRequest>): Mono<UpdateAssignmentResponse> =
+    override fun handle(request: UpdateAssignmentRequest): Mono<UpdateAssignmentResponse> =
         handler.handleUpdate(request)
 
 }

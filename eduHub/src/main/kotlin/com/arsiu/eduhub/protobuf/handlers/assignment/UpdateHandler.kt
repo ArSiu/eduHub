@@ -15,22 +15,19 @@ class UpdateHandler(
     private val mapper: AssignmentNatsMapper
 ) : AssignmentHandler<UpdateAssignmentRequest, UpdateAssignmentResponse>() {
 
-    fun handleUpdate(request: Mono<UpdateAssignmentRequest>): Mono<UpdateAssignmentResponse> =
-        request.flatMap {
-            when (it.request.requestCase) {
-                AssignmentRequest.RequestCase.ASSIGNMENT -> update(request)
-                AssignmentRequest.RequestCase.ASSIGNMENT_ID -> invalidIdResponse()
-                AssignmentRequest.RequestCase.REQUEST_NOT_SET -> noRequestTypeSetResponse()
-            }
+    fun handleUpdate(request: UpdateAssignmentRequest): Mono<UpdateAssignmentResponse> =
+        when (request.request.requestCase) {
+            AssignmentRequest.RequestCase.ASSIGNMENT -> update(request)
+            AssignmentRequest.RequestCase.ASSIGNMENT_ID -> invalidIdResponse()
+            AssignmentRequest.RequestCase.REQUEST_NOT_SET -> noRequestTypeSetResponse()
         }
 
-    fun update(request: Mono<UpdateAssignmentRequest>): Mono<UpdateAssignmentResponse> =
-        request.flatMap {
-            service.update(mapper.toEntityUpdate(it.request.assignment))
-                .map { assignment -> successUpdateResponse(assignment) }
-        }.doOnError { ex ->
-            failureResponse(ex.javaClass.simpleName, ex.message ?: "Unknown error")
-        }
+    fun update(request: UpdateAssignmentRequest): Mono<UpdateAssignmentResponse> =
+        service.update(mapper.toEntityUpdate(request.request.assignment))
+            .map { assignment -> successUpdateResponse(assignment) }
+            .doOnError { ex ->
+                failureResponse(ex.javaClass.simpleName, ex.message ?: "Unknown error")
+            }
 
     fun successUpdateResponse(assignment: Assignment): UpdateAssignmentResponse =
         UpdateAssignmentResponse.newBuilder().apply {

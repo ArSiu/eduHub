@@ -20,7 +20,7 @@ class AssignmentNatsControllerDeleteById(
     override val type = DeleteByIdAssignmentRequest::class.java
     override val parser: Parser<DeleteByIdAssignmentRequest> = DeleteByIdAssignmentRequest.parser()
 
-    override fun handle(request: Mono<DeleteByIdAssignmentRequest>): Mono<DeleteByIdAssignmentResponse> =
+    override fun handle(request: DeleteByIdAssignmentRequest): Mono<DeleteByIdAssignmentResponse> =
         handler.handleDelete(request)
 
 }

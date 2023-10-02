@@ -20,7 +20,7 @@ class AssignmentNatsControllerFindAll(
     override val type = FindAllAssignmentRequest::class.java
     override val parser: Parser<FindAllAssignmentRequest> = FindAllAssignmentRequest.parser()
 
-    override fun handle(request: Mono<FindAllAssignmentRequest>): Mono<FindAllAssignmentResponse> =
+    override fun handle(request: FindAllAssignmentRequest): Mono<FindAllAssignmentResponse> =
         handler.handleFindAll(request)
 
 }

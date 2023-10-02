@@ -20,7 +20,7 @@ class AssignmentNatsControllerFindById(
     override val type = FindByIdAssignmentRequest::class.java
     override val parser: Parser<FindByIdAssignmentRequest> = FindByIdAssignmentRequest.parser()
 
-    override fun handle(request: Mono<FindByIdAssignmentRequest>): Mono<FindByIdAssignmentResponse> =
+    override fun handle(request: FindByIdAssignmentRequest): Mono<FindByIdAssignmentResponse> =
         handler.handleFindById(request)
 
 }

@@ -12,22 +12,19 @@ class DeleteByIdHandler(
     private val service: AssignmentService
 ) : AssignmentHandler<DeleteByIdAssignmentRequest, DeleteByIdAssignmentResponse>() {
 
-    fun handleDelete(request: Mono<DeleteByIdAssignmentRequest>): Mono<DeleteByIdAssignmentResponse> =
-        request.flatMap {
-            when (it.request.requestCase) {
-                AssignmentRequest.RequestCase.ASSIGNMENT_ID -> deleteById(request)
-                AssignmentRequest.RequestCase.ASSIGNMENT -> unsupportedRequestTypeResponse()
-                AssignmentRequest.RequestCase.REQUEST_NOT_SET -> noRequestTypeSetResponse()
-            }
+    fun handleDelete(request: DeleteByIdAssignmentRequest): Mono<DeleteByIdAssignmentResponse> =
+        when (request.request.requestCase) {
+            AssignmentRequest.RequestCase.ASSIGNMENT_ID -> deleteById(request)
+            AssignmentRequest.RequestCase.ASSIGNMENT -> unsupportedRequestTypeResponse()
+            AssignmentRequest.RequestCase.REQUEST_NOT_SET -> noRequestTypeSetResponse()
         }
 
-    fun deleteById(request: Mono<DeleteByIdAssignmentRequest>): Mono<DeleteByIdAssignmentResponse> =
-        request.flatMap {
-            service.delete(it.request.assignmentId.id)
-                .thenReturn(successDeleteResponse())
-        }.doOnError { ex ->
-            failureResponse(ex.javaClass.simpleName, ex.message ?: "Unknown error")
-        }
+    fun deleteById(request: DeleteByIdAssignmentRequest): Mono<DeleteByIdAssignmentResponse> =
+        service.delete(request.request.assignmentId.id)
+            .thenReturn(successDeleteResponse())
+            .doOnError { ex ->
+                failureResponse(ex.javaClass.simpleName, ex.message ?: "Unknown error")
+            }
 
     fun successDeleteResponse(): DeleteByIdAssignmentResponse =
         DeleteByIdAssignmentResponse.newBuilder().apply {

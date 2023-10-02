@@ -52,6 +52,6 @@ interface NatsController<ReqT : GeneratedMessageV3, RepT : GeneratedMessageV3, H
      * @param request The incoming request message of type ReqT.
      * @return A reactive publisher (Mono) that emits a single reply message of type RepT.
      */
-    fun handle(request: Mono<ReqT>): Mono<RepT>
+    fun handle(request: ReqT): Mono<RepT>
 
 }
