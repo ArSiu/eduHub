@@ -1,4 +1,4 @@
-package com.arsiu.eduhub.controller.nats
+package com.arsiu.eduhub.testcontainers
 
 import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback

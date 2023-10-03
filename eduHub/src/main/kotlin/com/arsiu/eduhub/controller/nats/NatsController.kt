@@ -1,5 +1,6 @@
 package com.arsiu.eduhub.controller.nats
 
+import com.arsiu.eduhub.protobuf.handlers.Handler
 import com.google.protobuf.GeneratedMessageV3
 import com.google.protobuf.Parser
 import io.nats.client.Connection
@@ -12,7 +13,7 @@ import reactor.core.publisher.Mono
  * @param ReqT The type of the request message which should be a Protocol Buffers message.
  * @param RepT The type of the reply message which should also be a Protocol Buffers message.
  */
-interface NatsController<ReqT : GeneratedMessageV3, RepT : GeneratedMessageV3> {
+interface NatsController<ReqT : GeneratedMessageV3, RepT : GeneratedMessageV3, H : Handler<ReqT, RepT>> {
 
     /**
      * Represents the NATS connection which is utilized for communication with NATS servers.
@@ -37,21 +38,20 @@ interface NatsController<ReqT : GeneratedMessageV3, RepT : GeneratedMessageV3> {
     val subject: String
 
     /**
+     * The handler responsible for processing the incoming NATS messages. It defines how the request messages
+     * of type [ReqT] should be handled and processed to produce a response of type [RepT].
+     * Any class implementing this interface should provide
+     * an instance of a subtype of [Handler] that corresponds to the types [ReqT] and [RepT].
+     */
+    val handler: H
+
+    /**
      * Function to handle an incoming request message. Implementations should process the request
      * and return a corresponding reply message wrapped in a Mono for reactive handling.
      *
-     * @param message The incoming request message of type ReqT.
+     * @param request The incoming request message of type ReqT.
      * @return A reactive publisher (Mono) that emits a single reply message of type RepT.
      */
-    fun handler(request: ReqT): Mono<RepT>
+    fun handle(request: ReqT): Mono<RepT>
 
-    /**
-     * Provides a standard mechanism to construct a reply message in case of failures or exceptions.
-     * This can be used for sending error responses to the client.
-     *
-     * @param exception The exception name or type that occurred.
-     * @param message A descriptive error message to be sent in the reply.
-     * @return A reply message of type RepT representing the error or failure.
-     */
-    fun failureResponse(exception: String, message: String): RepT
 }

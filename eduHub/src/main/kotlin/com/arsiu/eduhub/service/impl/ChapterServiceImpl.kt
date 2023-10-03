@@ -26,7 +26,7 @@ class ChapterServiceImpl(
             .switchIfEmpty(Mono.error(NotFoundException("Chapter with ID $id not found")))
 
     override fun create(entity: Chapter): Mono<Chapter> =
-         courseService.findById(entity.courseId).then(chapterRepository.createCascade(entity))
+        courseService.findById(entity.courseId).then(chapterRepository.createCascade(entity))
 
     @NotifyTrigger("Chapter was updated ")
     override fun update(entity: Chapter): Mono<Chapter> =

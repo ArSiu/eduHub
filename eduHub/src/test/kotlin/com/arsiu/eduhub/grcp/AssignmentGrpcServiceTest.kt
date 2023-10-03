@@ -1,80 +1,104 @@
-package com.arsiu.eduhub.controller.nats
+package com.arsiu.eduhub.grcp
 
 import com.arsiu.eduhub.base.BaseAssignmentTest
 import com.arsiu.eduhub.model.Assignment
 import com.arsiu.eduhub.testcontainers.TestContainers
-import com.arsiu.eduhub.v2.assignmentsvc.NatsSubject.ASSIGNMENT_BY_ID
-import com.arsiu.eduhub.v2.assignmentsvc.NatsSubject.ASSIGNMENT_DELETE_BY_ID
-import com.arsiu.eduhub.v2.assignmentsvc.NatsSubject.ASSIGNMENT_FIND_ALL
-import com.arsiu.eduhub.v2.assignmentsvc.NatsSubject.ASSIGNMENT_UPDATE_BY_ID
+import com.arsiu.eduhub.v2.assignmentsvc.ReactorAssignmentServiceGrpc
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.DeleteByIdAssignmentRequest
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.FindAllAssignmentRequest
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.FindByIdAssignmentRequest
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.UpdateAssignmentRequest
 import com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment.DeleteByIdAssignmentResponse
-import com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment.FindAllAssignmentResponse
+import com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment.FindAllAssignmentStreamResponse
 import com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment.FindByIdAssignmentResponse
 import com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment.UpdateAssignmentResponse
-import io.nats.client.Connection
+import io.grpc.testing.GrpcCleanupRule
+import net.devh.boot.grpc.client.inject.GrpcClient
+import org.junit.Rule
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import reactor.core.publisher.Flux
+import reactor.test.StepVerifier
 
-@SpringBootTest
+@SpringBootTest(
+    properties = [
+        "grpc.server.inProcessName=test",
+        "grpc.server.port=-1",
+        "grpc.client.inProcess.address=in-process:test"
+    ]
+)
 @ExtendWith(TestContainers::class)
-class AssignmentNatsControllerTest : BaseAssignmentTest() {
+class AssignmentGrpcServiceTest : BaseAssignmentTest() {
 
-    @Autowired
-    private lateinit var natsConnection: Connection
+    @get:Rule
+    val grpcCleanup = GrpcCleanupRule()
+
+    @GrpcClient("inProcess")
+    lateinit var grpcService: ReactorAssignmentServiceGrpc.ReactorAssignmentServiceStub
 
     @Test
     fun `test find all assignments`() {
         val (expected, message) = createExpectedAndMessageForFindAll()
+        val response = grpcService.findAll(message)
 
-        val result = sendRequest<FindAllAssignmentResponse>(ASSIGNMENT_FIND_ALL, message)
-
-        Assertions.assertEquals(expected, result)
+        val zipped = Flux.zip(expected, response)
+        StepVerifier.create(zipped)
+            .assertNext { Assertions.assertEquals(it.t1, it.t2) }
+            .expectComplete()
+            .verify()
     }
 
     @Test
-    fun `test find assignment by id`() {
+    fun `test find assignment by ID`() {
         val (expected, message) = createExpectedAndMessageForFindById()
+        val response = grpcService.findById(message)
 
-        val result = sendRequest<FindByIdAssignmentResponse>(ASSIGNMENT_BY_ID, message)
-
-        Assertions.assertEquals(expected, result)
+        StepVerifier.create(response)
+            .assertNext { actualResponse -> Assertions.assertEquals(expected, actualResponse) }
+            .verifyComplete()
     }
 
     @Test
-    fun `test update assignment by id`() {
+    fun `test update assignment by ID`() {
         val (expected, message) = createExpectedAndMessageForUpdate()
+        val response = grpcService.update(message)
 
-        val result = sendRequest<UpdateAssignmentResponse>(ASSIGNMENT_UPDATE_BY_ID, message)
-
-        Assertions.assertEquals(expected, result)
+        StepVerifier.create(response)
+            .assertNext { actualResponse -> Assertions.assertEquals(expected, actualResponse) }
+            .verifyComplete()
     }
 
     @Test
-    fun `test delete assignment by id`() {
+    fun `test delete assignment by ID`() {
         val (expected, message) = createExpectedAndMessageForDelete()
+        val response = grpcService.deleteById(message)
 
-        val result = sendRequest<DeleteByIdAssignmentResponse>(ASSIGNMENT_DELETE_BY_ID, message)
-
-        Assertions.assertEquals(expected, result)
+        StepVerifier.create(response)
+            .assertNext { actualResponse -> Assertions.assertEquals(expected, actualResponse) }
+            .verifyComplete()
     }
 
-    private fun createExpectedAndMessageForFindAll(): Pair<FindAllAssignmentResponse?, FindAllAssignmentRequest> {
-        val expected = service.findAll().collectList().block()?.let { findAllHandler.successFindAllResponse(it) }
-
-        val message = FindAllAssignmentRequest.getDefaultInstance()
+    private fun createExpectedAndMessageForFindAll():
+            Pair<Flux<FindAllAssignmentStreamResponse>, FindAllAssignmentRequest> {
+        val expected = service.findAll().map {
+            FindAllAssignmentStreamResponse.newBuilder().apply {
+                setResponse(mapper.toResponseDto(it))
+            }.build()
+        }
+        val message = FindAllAssignmentRequest.newBuilder().build()
 
         return Pair(expected, message)
     }
 
-    private fun createExpectedAndMessageForFindById(): Pair<FindByIdAssignmentResponse?, FindByIdAssignmentRequest> {
-        val expected = service.findById(assignmentId).block()?.let { findByIdHandler.successFindByIdResponse(it) }
+    private fun createExpectedAndMessageForFindById(): Pair<FindByIdAssignmentResponse, FindByIdAssignmentRequest> {
+        val assignment = Assignment().apply {
+            id = assignmentId
+            name = assignmentName
+        }
+
+        val expected = findByIdHandler.successFindByIdResponse(assignment)
 
         val message = FindByIdAssignmentRequest.newBuilder().apply {
             requestBuilder.assignmentIdBuilder.setId(assignmentId)
@@ -106,11 +130,5 @@ class AssignmentNatsControllerTest : BaseAssignmentTest() {
         }.build()
 
         return Pair(expected, message)
-    }
-
-    private inline fun <reified T> sendRequest(subject: String, message: com.google.protobuf.Message): T {
-        val future = natsConnection.request(subject, com.google.protobuf.Any.pack(message).toByteArray())
-        return T::class.java.getDeclaredMethod("parseFrom", ByteArray::class.java)
-            .invoke(null, future.get().data) as T
     }
 }
