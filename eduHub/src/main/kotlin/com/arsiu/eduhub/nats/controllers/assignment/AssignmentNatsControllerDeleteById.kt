@@ -1,6 +1,6 @@
-package com.arsiu.eduhub.controller.nats.assignment
+package com.arsiu.eduhub.nats.controllers.assignment
 
-import com.arsiu.eduhub.controller.nats.NatsController
+import com.arsiu.eduhub.nats.controllers.NatsController
 import com.arsiu.eduhub.protobuf.handlers.assignment.DeleteByIdHandler
 import com.arsiu.eduhub.v2.assignmentsvc.NatsSubject.ASSIGNMENT_DELETE_BY_ID
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.DeleteByIdAssignmentRequest

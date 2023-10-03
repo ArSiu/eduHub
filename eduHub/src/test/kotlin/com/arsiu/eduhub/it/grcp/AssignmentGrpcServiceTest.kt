@@ -1,8 +1,8 @@
-package com.arsiu.eduhub.grcp
+package com.arsiu.eduhub.it.grcp
 
-import com.arsiu.eduhub.base.BaseAssignmentTest
+import com.arsiu.eduhub.it.base.BaseAssignmentTest
+import com.arsiu.eduhub.it.testcontainers.TestContainers
 import com.arsiu.eduhub.model.Assignment
-import com.arsiu.eduhub.testcontainers.TestContainers
 import com.arsiu.eduhub.v2.assignmentsvc.ReactorAssignmentServiceGrpc
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.DeleteByIdAssignmentRequest
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.FindAllAssignmentRequest
@@ -21,11 +21,12 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.test.context.SpringBootTest
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
+import java.time.Duration
 
 @SpringBootTest(
     properties = [
         "grpc.server.inProcessName=test",
-        "grpc.server.port=-1",
+        "grpc.server.port=9091",
         "grpc.client.inProcess.address=in-process:test"
     ]
 )
@@ -37,6 +38,36 @@ class AssignmentGrpcServiceTest : BaseAssignmentTest() {
 
     @GrpcClient("inProcess")
     lateinit var grpcService: ReactorAssignmentServiceGrpc.ReactorAssignmentServiceStub
+
+    @Test
+    fun `test find all assignments stream`() {
+        val expected = findAllStreamHandler.convertToFindAllStreamResponse(mapper.toResponseDto(
+            Assignment().apply {
+                id = assignmentId
+                name = assignmentName
+            }
+        ))
+
+        val expected2 = findAllStreamHandler.convertToFindAllStreamResponse(mapper.toResponseDto(
+            Assignment().apply {
+                id = assignmentId
+                name = "test1"
+            }
+        ))
+        val assignmentsFlux = grpcService.findAll(FindAllAssignmentRequest.getDefaultInstance())
+
+        StepVerifier.create(assignmentsFlux.take(2))
+            .expectNextMatches { it == expected }
+            .thenAwait(Duration.ofSeconds(10))
+            .then {
+                val (_, message) = createExpectedAndMessageForUpdate()
+                grpcService.update(message).subscribe()
+            }
+            .thenAwait(Duration.ofSeconds(10))
+            .expectNextMatches { it == expected2 }
+            .expectComplete()
+            .verify()
+    }
 
     @Test
     fun `test find all assignments`() {
@@ -87,7 +118,7 @@ class AssignmentGrpcServiceTest : BaseAssignmentTest() {
                 setResponse(mapper.toResponseDto(it))
             }.build()
         }
-        val message = FindAllAssignmentRequest.newBuilder().build()
+        val message = FindAllAssignmentRequest.getDefaultInstance()
 
         return Pair(expected, message)
     }
@@ -131,4 +162,5 @@ class AssignmentGrpcServiceTest : BaseAssignmentTest() {
 
         return Pair(expected, message)
     }
+
 }

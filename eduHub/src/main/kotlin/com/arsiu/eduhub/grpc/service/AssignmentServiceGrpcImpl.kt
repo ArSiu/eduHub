@@ -1,9 +1,11 @@
 package com.arsiu.eduhub.grpc.service
 
+import com.arsiu.eduhub.kafka.producer.AssignmentKafkaProducer
 import com.arsiu.eduhub.protobuf.handlers.assignment.DeleteByIdHandler
 import com.arsiu.eduhub.protobuf.handlers.assignment.FindAllStreamHandler
 import com.arsiu.eduhub.protobuf.handlers.assignment.FindByIdHandler
 import com.arsiu.eduhub.protobuf.handlers.assignment.UpdateHandler
+import com.arsiu.eduhub.shared.streams.SharedAssignmentStream
 import com.arsiu.eduhub.v2.assignmentsvc.ReactorAssignmentServiceGrpc.AssignmentServiceImplBase
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.DeleteByIdAssignmentRequest
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.FindAllAssignmentRequest
@@ -22,20 +24,29 @@ class AssignmentServiceGrpcImpl(
     private val findAllStreamHandler: FindAllStreamHandler,
     private val findByIdHandler: FindByIdHandler,
     private val updateHandler: UpdateHandler,
-    private val deleteByIdHandler: DeleteByIdHandler
+    private val deleteByIdHandler: DeleteByIdHandler,
+    val sharedAssignmentStream: SharedAssignmentStream,
+    val producer: AssignmentKafkaProducer
 ) : AssignmentServiceImplBase() {
 
     override fun findAll(request: Mono<FindAllAssignmentRequest>): Flux<FindAllAssignmentStreamResponse> =
-        request.flatMapMany { findAllStreamHandler.handleFindAll(it) }
+        Flux.concat(
+            request.flatMapMany { findAllStreamHandler.handleFindAll(it) },
+            sharedAssignmentStream.flux
+        ).log()
 
     override fun findById(request: Mono<FindByIdAssignmentRequest>): Mono<FindByIdAssignmentResponse> =
         request.flatMap { findByIdHandler.handleFindById(it) }
 
     override fun update(request: Mono<UpdateAssignmentRequest>): Mono<UpdateAssignmentResponse> =
-        request.flatMap { updateHandler.handleUpdate(it) }
+        request.flatMap { updateRequest ->
+            updateHandler.handleUpdate(updateRequest)
+        }
+        .doOnNext { response ->
+            producer.sendAssignmentUpdateToKafka(response.response.success.assignment)
+        }
 
     override fun deleteById(request: Mono<DeleteByIdAssignmentRequest>): Mono<DeleteByIdAssignmentResponse> =
         request.flatMap { deleteByIdHandler.handleDelete(it) }
-
 
 }
