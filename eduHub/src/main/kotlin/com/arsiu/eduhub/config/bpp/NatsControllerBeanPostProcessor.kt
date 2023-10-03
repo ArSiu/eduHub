@@ -1,6 +1,6 @@
 package com.arsiu.eduhub.config.bpp
 
-import com.arsiu.eduhub.controller.nats.NatsController
+import com.arsiu.eduhub.nats.controllers.NatsController
 import com.arsiu.eduhub.protobuf.handlers.Handler
 import com.google.protobuf.GeneratedMessageV3
 import org.springframework.beans.factory.config.BeanPostProcessor
@@ -19,8 +19,11 @@ class NatsControllerBeanPostProcessor : BeanPostProcessor {
 
     private fun <ReqT : GeneratedMessageV3, RepT : GeneratedMessageV3, H : Handler<ReqT, RepT>>
             NatsController<ReqT, RepT, H>.initializeNatsController() {
+
         connection.createDispatcher { message ->
+
             val any = com.google.protobuf.Any.parseFrom(message.data)
+
             if (!any.`is`(type)) {
                 connection.publish(
                     message.replyTo,
@@ -29,14 +32,15 @@ class NatsControllerBeanPostProcessor : BeanPostProcessor {
                         "Message type mismatch or you dont use Any.pack()"
                     ).toByteArray()
                 )
-            } else {
-                handle(parser.parseFrom(any.unpack(type).toByteArray()))
-                    .subscribeOn(Schedulers.boundedElastic())
-                    .publishOn(Schedulers.boundedElastic())
-                    .map { it.toByteArray() }
-                    .doOnNext { connection.publish(message.replyTo, it) }
-                    .subscribe()
+                return@createDispatcher
             }
+
+            handle(parser.parseFrom(any.unpack(type).toByteArray()))
+                .subscribeOn(Schedulers.boundedElastic())
+                .publishOn(Schedulers.boundedElastic())
+                .map { it.toByteArray() }
+                .doOnNext { connection.publish(message.replyTo, it) }
+                .subscribe()
         }.subscribe(subject)
     }
 

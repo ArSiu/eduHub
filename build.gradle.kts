@@ -23,6 +23,7 @@ allprojects {
 
     repositories {
         mavenCentral()
+        maven { url = uri("https://packages.confluent.io/maven/") }
     }
 }
 
@@ -31,22 +32,27 @@ subprojects {
     apply(plugin = "com.google.protobuf")
 
     dependencies {
+        //Reactor
         implementation("io.projectreactor:reactor-core:${Versions.reactor}")
 
+        //gRPC
         implementation("io.grpc:grpc-core:${Versions.grpc}")
         implementation("io.grpc:grpc-census:${Versions.grpc}")
         implementation("io.grpc:grpc-protobuf:${Versions.grpc}")
         implementation("io.grpc:grpc-netty:${Versions.grpc}")
         implementation("io.grpc:grpc-stub:${Versions.grpc}")
 
+        //Reactive-gRPC
         implementation("com.salesforce.servicelibs:reactor-grpc:${Versions.rgrpc}")
         implementation("com.salesforce.servicelibs:reactive-grpc-common:${Versions.rgrpc}")
         implementation("com.salesforce.servicelibs:reactor-grpc-stub:${Versions.rgrpc}")
 
+        //Proto
         implementation("com.google.protobuf:protobuf-java:${Versions.protobufjava}")
+        implementation("com.google.protobuf:protobuf-java-util:${Versions.protobufjava}")
 
+        //Test
         testImplementation ("io.grpc:grpc-testing:${Versions.grpc}")
-
         testImplementation("io.projectreactor:reactor-test:${Versions.reactor}")
     }
 }
