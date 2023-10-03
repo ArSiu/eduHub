@@ -1,4 +1,4 @@
-package com.arsiu.eduhub.base
+package com.arsiu.eduhub.it.base
 
 import com.arsiu.eduhub.mapper.AssignmentNatsMapper
 import com.arsiu.eduhub.model.Assignment
@@ -12,6 +12,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
+import org.springframework.data.mongodb.core.query.Criteria
+import org.springframework.data.mongodb.core.query.Query
+import org.springframework.data.mongodb.core.query.Update
 
 @SpringBootTest
 abstract class BaseAssignmentTest {
@@ -46,11 +49,11 @@ abstract class BaseAssignmentTest {
 
     @BeforeEach
     fun setUpAssignment() {
-        val assignment = Assignment().apply {
-            id = assignmentId
-            name = assignmentName
-        }
-        mongoTemplate.save(assignment).block()
+        val query = Query.query(Criteria.where("id").`is`(assignmentId))
+
+        val update = Update().set("name", assignmentName)
+
+        mongoTemplate.upsert(query, update, Assignment::class.java).block()
     }
 
 }

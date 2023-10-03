@@ -3,6 +3,7 @@ package com.arsiu.eduhub.protobuf.handlers.assignment
 import com.arsiu.eduhub.mapper.AssignmentNatsMapper
 import com.arsiu.eduhub.model.Assignment
 import com.arsiu.eduhub.service.AssignmentService
+import com.arsiu.eduhub.v2.assignmentsvc.commonmodels.assignment.AssignmentProto
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.FindAllAssignmentRequest
 import com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment.FindAllAssignmentStreamResponse
 import org.springframework.stereotype.Component
@@ -29,5 +30,9 @@ class FindAllStreamHandler(
         FindAllAssignmentStreamResponse.newBuilder().apply {
             setResponse(mapper.toResponseDto(assignment))
         }.build()
+
+    fun convertToFindAllStreamResponse(assignment: AssignmentProto): FindAllAssignmentStreamResponse =
+        successFindAllStreamResponse(mapper.toEntityUpdate(assignment))
+
 
 }

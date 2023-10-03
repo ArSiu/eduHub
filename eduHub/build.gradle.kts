@@ -2,14 +2,17 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 object Versions {
     const val mapstruct = "1.5.5.Final"
-    const val springdoc = "2.2.0"
+    const val springdoc = "2.1.0"
     const val lombok = "1.18.28"
-    const val testcontainers = "1.19.0"
+    const val testcontainers = "1.18.0"
     const val jupiter = "5.8.1"
     const val jnats = "2.16.14"
+    const val springKafa = "3.0.11"
+    const val reactorKafka = "1.3.21"
 }
 
 plugins {
+    application
     id("org.springframework.boot")
     id("io.spring.dependency-management")
     id("io.gitlab.arturbosch.detekt")
@@ -45,6 +48,12 @@ dependencies {
 
     // Nats
     implementation("io.nats:jnats:${Versions.jnats}")
+
+    //Kafka
+    implementation("org.springframework.kafka:spring-kafka:${Versions.springKafa}")
+    implementation("io.projectreactor.kafka:reactor-kafka:${Versions.reactorKafka}")
+    implementation("io.confluent:kafka-protobuf-serializer:7.4.0")
+
 
     // Testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")

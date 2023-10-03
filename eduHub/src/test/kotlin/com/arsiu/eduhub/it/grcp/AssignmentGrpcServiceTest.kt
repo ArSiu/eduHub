@@ -1,8 +1,8 @@
-package com.arsiu.eduhub.grcp
+package com.arsiu.eduhub.it.grcp
 
-import com.arsiu.eduhub.base.BaseAssignmentTest
+import com.arsiu.eduhub.it.base.BaseAssignmentTest
+import com.arsiu.eduhub.it.testcontainers.TestContainers
 import com.arsiu.eduhub.model.Assignment
-import com.arsiu.eduhub.testcontainers.TestContainers
 import com.arsiu.eduhub.v2.assignmentsvc.ReactorAssignmentServiceGrpc
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.DeleteByIdAssignmentRequest
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.FindAllAssignmentRequest
@@ -16,20 +16,27 @@ import io.grpc.testing.GrpcCleanupRule
 import net.devh.boot.grpc.client.inject.GrpcClient
 import org.junit.Rule
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation
+import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestMethodOrder
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.test.context.SpringBootTest
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
+import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 @SpringBootTest(
     properties = [
         "grpc.server.inProcessName=test",
-        "grpc.server.port=-1",
+        "grpc.server.port=9091",
         "grpc.client.inProcess.address=in-process:test"
     ]
 )
 @ExtendWith(TestContainers::class)
+@TestMethodOrder(OrderAnnotation::class)
 class AssignmentGrpcServiceTest : BaseAssignmentTest() {
 
     @get:Rule
@@ -39,6 +46,32 @@ class AssignmentGrpcServiceTest : BaseAssignmentTest() {
     lateinit var grpcService: ReactorAssignmentServiceGrpc.ReactorAssignmentServiceStub
 
     @Test
+    @Order(2)
+    fun `test find all assignments stream`() {
+        val latch = CountDownLatch(2)
+        val collectedItems = CopyOnWriteArrayList<FindAllAssignmentStreamResponse>()
+
+        val subscription = grpcService.findAll(FindAllAssignmentRequest.getDefaultInstance()).subscribe(
+            {
+                collectedItems.add(it)
+                latch.countDown()
+            },
+            { latch.countDown() }
+        )
+
+        latch.await(5, TimeUnit.SECONDS)
+        val (expected, message) = createExpectedAndMessageForUpdate()
+        grpcService.update(message).subscribe()
+
+        latch.await(5, TimeUnit.SECONDS)
+
+        Assertions.assertEquals(2, collectedItems.size)
+
+        subscription.dispose()
+    }
+
+    @Test
+    @Order(3)
     fun `test find all assignments`() {
         val (expected, message) = createExpectedAndMessageForFindAll()
         val response = grpcService.findAll(message)
@@ -51,6 +84,7 @@ class AssignmentGrpcServiceTest : BaseAssignmentTest() {
     }
 
     @Test
+    @Order(4)
     fun `test find assignment by ID`() {
         val (expected, message) = createExpectedAndMessageForFindById()
         val response = grpcService.findById(message)
@@ -61,6 +95,7 @@ class AssignmentGrpcServiceTest : BaseAssignmentTest() {
     }
 
     @Test
+    @Order(5)
     fun `test update assignment by ID`() {
         val (expected, message) = createExpectedAndMessageForUpdate()
         val response = grpcService.update(message)
@@ -71,6 +106,7 @@ class AssignmentGrpcServiceTest : BaseAssignmentTest() {
     }
 
     @Test
+    @Order(6)
     fun `test delete assignment by ID`() {
         val (expected, message) = createExpectedAndMessageForDelete()
         val response = grpcService.deleteById(message)
@@ -87,7 +123,7 @@ class AssignmentGrpcServiceTest : BaseAssignmentTest() {
                 setResponse(mapper.toResponseDto(it))
             }.build()
         }
-        val message = FindAllAssignmentRequest.newBuilder().build()
+        val message = FindAllAssignmentRequest.getDefaultInstance()
 
         return Pair(expected, message)
     }
@@ -131,4 +167,5 @@ class AssignmentGrpcServiceTest : BaseAssignmentTest() {
 
         return Pair(expected, message)
     }
+
 }
