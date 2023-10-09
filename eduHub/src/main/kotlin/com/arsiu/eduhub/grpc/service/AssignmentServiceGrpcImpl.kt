@@ -35,20 +35,18 @@ class AssignmentServiceGrpcImpl(
             sharedAssignmentStream.flux
         ).log()
 
-
     override fun findById(request: Mono<FindByIdAssignmentRequest>): Mono<FindByIdAssignmentResponse> =
         request.flatMap { findByIdHandler.handleFindById(it) }
 
     override fun update(request: Mono<UpdateAssignmentRequest>): Mono<UpdateAssignmentResponse> =
         request.flatMap { updateRequest ->
             updateHandler.handleUpdate(updateRequest)
-                .doOnNext { response ->
-                    producer.sendAssignmentUpdateToKafka(response.response.success.assignment)
-                }
+        }
+        .doOnNext { response ->
+            producer.sendAssignmentUpdateToKafka(response.response.success.assignment)
         }
 
     override fun deleteById(request: Mono<DeleteByIdAssignmentRequest>): Mono<DeleteByIdAssignmentResponse> =
         request.flatMap { deleteByIdHandler.handleDelete(it) }
-
 
 }

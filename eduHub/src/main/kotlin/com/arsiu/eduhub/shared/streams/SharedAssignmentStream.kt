@@ -5,6 +5,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import reactor.core.publisher.Sinks
 
 /**
@@ -18,10 +19,10 @@ class SharedAssignmentStream {
 
     // Sink that can hold multiple subscribers. It uses a backpressure buffer to handle situations where items
     // are being produced faster than they can be consumed.
-    private val processor: Sinks.Many<FindAllAssignmentStreamResponse> = Sinks.many().multicast().onBackpressureBuffer()
+    private val sink = Sinks.many().multicast().onBackpressureBuffer<FindAllAssignmentStreamResponse>()
 
     // Expose the processor as a Flux so that multiple subscribers can listen for assignment updates.
-    val flux: Flux<FindAllAssignmentStreamResponse> = processor.asFlux().concatWith(Flux.never())
+    val flux: Flux<FindAllAssignmentStreamResponse> = sink.asFlux().publish().autoConnect(1)
 
     /**
      * Pushes new assignment updates to the shared stream.
@@ -30,7 +31,7 @@ class SharedAssignmentStream {
      */
     fun push(assignments: List<FindAllAssignmentStreamResponse>) {
         assignments.forEach { assignment ->
-            val result = processor.tryEmitNext(assignment)
+            val result = sink.tryEmitNext(assignment)
             if (result.isFailure) {
                 logger.warn("Failed to emit assignment: $assignment, Reason: ${result.isFailure}")
             }

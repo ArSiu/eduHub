@@ -21,7 +21,7 @@ class AssignmentKafkaConsumer(
     @PostConstruct
     fun listen() {
         assignmentKafkaReceiver.receiveAutoAck()
-            .concatMap { fluxRecord ->
+            .flatMap { fluxRecord ->
                 fluxRecord.map { record ->
                     natsConnection.publish(subject, record.value().toByteArray())
                     record

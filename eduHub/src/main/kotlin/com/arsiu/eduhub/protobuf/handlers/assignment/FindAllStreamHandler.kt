@@ -31,8 +31,8 @@ class FindAllStreamHandler(
             setResponse(mapper.toResponseDto(assignment))
         }.build()
 
-    fun convertToFindAllStreamResponse(assignment: AssignmentProto): FindAllAssignmentStreamResponse =
+    fun convertToFindAllStreamResponse(assignment: AssignmentProto):
+            FindAllAssignmentStreamResponse =
         successFindAllStreamResponse(mapper.toEntityUpdate(assignment))
-
 
 }

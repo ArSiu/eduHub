@@ -16,14 +16,20 @@ import io.grpc.testing.GrpcCleanupRule
 import net.devh.boot.grpc.client.inject.GrpcClient
 import org.junit.Rule
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.mongodb.core.query.Criteria
+import org.springframework.data.mongodb.core.query.Query
+import org.springframework.data.mongodb.core.query.Update
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
+import java.time.Duration
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -36,7 +42,6 @@ import java.util.concurrent.TimeUnit
     ]
 )
 @ExtendWith(TestContainers::class)
-@TestMethodOrder(OrderAnnotation::class)
 class AssignmentGrpcServiceTest : BaseAssignmentTest() {
 
     @get:Rule
@@ -46,32 +51,36 @@ class AssignmentGrpcServiceTest : BaseAssignmentTest() {
     lateinit var grpcService: ReactorAssignmentServiceGrpc.ReactorAssignmentServiceStub
 
     @Test
-    @Order(2)
     fun `test find all assignments stream`() {
-        val latch = CountDownLatch(2)
-        val collectedItems = CopyOnWriteArrayList<FindAllAssignmentStreamResponse>()
+        val expected = findAllStreamHandler.convertToFindAllStreamResponse(mapper.toResponseDto(
+            Assignment().apply {
+                id = assignmentId
+                name = assignmentName
+            }
+        ))
 
-        val subscription = grpcService.findAll(FindAllAssignmentRequest.getDefaultInstance()).subscribe(
-            {
-                collectedItems.add(it)
-                latch.countDown()
-            },
-            { latch.countDown() }
-        )
+        val expected2 = findAllStreamHandler.convertToFindAllStreamResponse(mapper.toResponseDto(
+            Assignment().apply {
+                id = assignmentId
+                name = "test1"
+            }
+        ))
+        val assignmentsFlux = grpcService.findAll(FindAllAssignmentRequest.getDefaultInstance())
 
-        latch.await(5, TimeUnit.SECONDS)
-        val (expected, message) = createExpectedAndMessageForUpdate()
-        grpcService.update(message).subscribe()
-
-        latch.await(5, TimeUnit.SECONDS)
-
-        Assertions.assertEquals(2, collectedItems.size)
-
-        subscription.dispose()
+        StepVerifier.create(assignmentsFlux.take(2))
+            .expectNextMatches { it == expected }
+            .thenAwait(Duration.ofSeconds(10))
+            .then {
+                val (_, message) = createExpectedAndMessageForUpdate()
+                grpcService.update(message).subscribe()
+            }
+            .thenAwait(Duration.ofSeconds(10))
+            .expectNextMatches { it == expected2 }
+            .expectComplete()
+            .verify()
     }
 
     @Test
-    @Order(3)
     fun `test find all assignments`() {
         val (expected, message) = createExpectedAndMessageForFindAll()
         val response = grpcService.findAll(message)
@@ -84,7 +93,6 @@ class AssignmentGrpcServiceTest : BaseAssignmentTest() {
     }
 
     @Test
-    @Order(4)
     fun `test find assignment by ID`() {
         val (expected, message) = createExpectedAndMessageForFindById()
         val response = grpcService.findById(message)
@@ -95,7 +103,6 @@ class AssignmentGrpcServiceTest : BaseAssignmentTest() {
     }
 
     @Test
-    @Order(5)
     fun `test update assignment by ID`() {
         val (expected, message) = createExpectedAndMessageForUpdate()
         val response = grpcService.update(message)
@@ -106,7 +113,6 @@ class AssignmentGrpcServiceTest : BaseAssignmentTest() {
     }
 
     @Test
-    @Order(6)
     fun `test delete assignment by ID`() {
         val (expected, message) = createExpectedAndMessageForDelete()
         val response = grpcService.deleteById(message)
