@@ -2,5 +2,11 @@ rootProject.name = "root"
 
 include(
     "eduHub",
-    "proto"
+    "proto",
+    "eduHub:assignment",
+    "eduHub:lesson",
+    "eduHub:chapter",
+    "eduHub:course",
+    "eduHub:user",
+    "eduHub:common"
 )
