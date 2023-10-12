@@ -35,5 +35,4 @@ class FindAllStreamHandler(
             FindAllAssignmentStreamResponse =
         successFindAllStreamResponse(mapper.toEntityUpdate(assignment))
 
-
 }
