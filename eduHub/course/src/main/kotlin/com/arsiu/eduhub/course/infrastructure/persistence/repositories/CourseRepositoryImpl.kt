@@ -1,9 +1,9 @@
 package com.arsiu.eduhub.course.infrastructure.persistence.repositories
 
-import com.arsiu.eduhub.course.application.mapper.CourseToEntityMapper
-import com.arsiu.eduhub.course.application.ports.CourseRepository
+import com.arsiu.eduhub.course.infrastructure.mapper.CourseToEntityMapper
+import com.arsiu.eduhub.course.application.port.CourseRepository
 import com.arsiu.eduhub.course.domain.Course
-import com.arsiu.eduhub.course.infrastructure.persistence.entity.CourseEntity
+import com.arsiu.eduhub.course.infrastructure.persistence.entity.MongoCourse
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.aggregation.Aggregation
 import org.springframework.data.mongodb.core.query.Criteria
@@ -25,12 +25,12 @@ class CourseRepositoryImpl(
         }
 
     override fun findAll(): Flux<Course> =
-        reactiveMongoTemplate.findAll(CourseEntity::class.java).map {
+        reactiveMongoTemplate.findAll(MongoCourse::class.java).map {
             mapper.toModel(it)
         }
 
     override fun findById(id: String): Mono<Course> =
-        reactiveMongoTemplate.findById(id, CourseEntity::class.java).map {
+        reactiveMongoTemplate.findById(id, MongoCourse::class.java).map {
             mapper.toModel(it)
         }
 
@@ -44,7 +44,7 @@ class CourseRepositoryImpl(
             .set("ownerId", entity.ownerId)
             .set("chapters", entity.chapters)
 
-        return reactiveMongoTemplate.upsert(query, update, CourseEntity::class.java)
+        return reactiveMongoTemplate.upsert(query, update, MongoCourse::class.java)
             .thenReturn(model)
     }
 
@@ -52,7 +52,7 @@ class CourseRepositoryImpl(
         reactiveMongoTemplate.remove(mapper.toEntityWithId(model)).then()
 
     override fun find(query: Query): Flux<Course> =
-        reactiveMongoTemplate.find(query, CourseEntity::class.java).map {
+        reactiveMongoTemplate.find(query, MongoCourse::class.java).map {
             mapper.toModel(it)
         }
 
@@ -60,7 +60,7 @@ class CourseRepositoryImpl(
         reactiveMongoTemplate.aggregate(
             aggregation,
             "courseEntity",
-            CourseEntity::class.java
+            MongoCourse::class.java
         ).map {
             mapper.toModel(it)
         }

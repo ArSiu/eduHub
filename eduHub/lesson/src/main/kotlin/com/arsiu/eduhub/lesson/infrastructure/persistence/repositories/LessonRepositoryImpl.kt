@@ -1,9 +1,9 @@
 package com.arsiu.eduhub.lesson.infrastructure.persistence.repositories
 
-import com.arsiu.eduhub.lesson.application.mapper.LessonToEntityMapper
-import com.arsiu.eduhub.lesson.application.ports.LessonRepository
+import com.arsiu.eduhub.lesson.infrastructure.mapper.LessonToEntityMapper
+import com.arsiu.eduhub.lesson.application.port.LessonRepository
 import com.arsiu.eduhub.lesson.domain.Lesson
-import com.arsiu.eduhub.lesson.infrastructure.persistence.entity.LessonEntity
+import com.arsiu.eduhub.lesson.infrastructure.persistence.entity.MongoLesson
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
@@ -24,12 +24,12 @@ class LessonRepositoryImpl(
         }
 
     override fun findAll(): Flux<Lesson> =
-        reactiveMongoTemplate.findAll(LessonEntity::class.java).map {
+        reactiveMongoTemplate.findAll(MongoLesson::class.java).map {
             mapper.toModel(it)
         }
 
     override fun findById(id: String): Mono<Lesson> =
-        reactiveMongoTemplate.findById(id, LessonEntity::class.java).map {
+        reactiveMongoTemplate.findById(id, MongoLesson::class.java).map {
             mapper.toModel(it)
         }
 
@@ -42,7 +42,7 @@ class LessonRepositoryImpl(
             .set("name", entity.name)
             .set("assignments", entity.assignments)
 
-        return reactiveMongoTemplate.upsert(query, update, LessonEntity::class.java)
+        return reactiveMongoTemplate.upsert(query, update, MongoLesson::class.java)
             .thenReturn(model)
     }
 
@@ -50,7 +50,7 @@ class LessonRepositoryImpl(
         reactiveMongoTemplate.remove(mapper.toEntityWithId(model)).then()
 
     override fun find(query: Query): Flux<Lesson> =
-        reactiveMongoTemplate.find(query, LessonEntity::class.java).map {
+        reactiveMongoTemplate.find(query, MongoLesson::class.java).map {
             mapper.toModel(it)
         }
 

@@ -1,7 +1,7 @@
 package com.arsiu.eduhub.common.application.config.bpp
 
-import com.arsiu.eduhub.common.application.ports.nats.NatsController
-import com.arsiu.eduhub.common.application.ports.protobuf.handler.Handler
+import com.arsiu.eduhub.common.application.port.nats.NatsController
+import com.arsiu.eduhub.common.application.port.protobuf.handler.Handler
 import com.google.protobuf.GeneratedMessageV3
 import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.stereotype.Component

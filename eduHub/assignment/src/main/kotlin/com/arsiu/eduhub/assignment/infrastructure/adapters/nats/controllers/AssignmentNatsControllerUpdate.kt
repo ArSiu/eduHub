@@ -1,7 +1,7 @@
 package com.arsiu.eduhub.assignment.infrastructure.adapters.nats.controllers
 
 import com.arsiu.eduhub.assignment.infrastructure.adapters.handlers.assignment.UpdateHandler
-import com.arsiu.eduhub.common.application.ports.nats.NatsController
+import com.arsiu.eduhub.common.application.port.nats.NatsController
 import com.arsiu.eduhub.v2.assignmentsvc.NatsSubject.ASSIGNMENT_UPDATE_BY_ID
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.UpdateAssignmentRequest
 import com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment.UpdateAssignmentResponse

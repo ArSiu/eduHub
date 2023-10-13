@@ -1,9 +1,9 @@
 package com.arsiu.eduhub.user.infrastructure.persistence.repositories
 
-import com.arsiu.eduhub.user.application.mapper.UserToEntityMapper
-import com.arsiu.eduhub.user.application.ports.UserRepository
+import com.arsiu.eduhub.user.infrastructure.mapper.UserToEntityMapper
+import com.arsiu.eduhub.user.application.port.UserRepository
 import com.arsiu.eduhub.user.domain.User
-import com.arsiu.eduhub.user.infrastructure.persistence.entity.UserEntity
+import com.arsiu.eduhub.user.infrastructure.persistence.entity.MongoUser
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
@@ -23,12 +23,12 @@ class UserRepositoryImpl(
             .map { mapper.toModel(it) }
 
     override fun findAll(): Flux<User> =
-        reactiveMongoTemplate.findAll(UserEntity::class.java).map {
+        reactiveMongoTemplate.findAll(MongoUser::class.java).map {
             mapper.toModel(it)
         }
 
     override fun findById(id: String): Mono<User> =
-        reactiveMongoTemplate.findById(id, UserEntity::class.java).map {
+        reactiveMongoTemplate.findById(id, MongoUser::class.java).map {
             mapper.toModel(it)
         }
 
@@ -45,7 +45,7 @@ class UserRepositoryImpl(
             .set("password", entity.password)
             .set("role", entity.role)
 
-        return reactiveMongoTemplate.upsert(query, update, UserEntity::class.java)
+        return reactiveMongoTemplate.upsert(query, update, MongoUser::class.java)
             .thenReturn(model)
     }
 
@@ -53,7 +53,7 @@ class UserRepositoryImpl(
         reactiveMongoTemplate.remove(mapper.toEntityWithId(model)).then()
 
     override fun find(query: Query): Flux<User> =
-        reactiveMongoTemplate.find(query, UserEntity::class.java).map {
+        reactiveMongoTemplate.find(query, MongoUser::class.java).map {
             mapper.toModel(it)
         }
 

@@ -1,11 +1,11 @@
 package com.arsiu.eduhub.lesson.application.services
 
-import com.arsiu.eduhub.assignment.application.ports.AssignmentService
+import com.arsiu.eduhub.assignment.application.port.AssignmentService
 import com.arsiu.eduhub.assignment.domain.Assignment
 import com.arsiu.eduhub.common.application.annotation.NotifyTrigger
 import com.arsiu.eduhub.common.application.exception.NotFoundException
-import com.arsiu.eduhub.lesson.application.ports.LessonRepository
-import com.arsiu.eduhub.lesson.application.ports.LessonService
+import com.arsiu.eduhub.lesson.application.port.LessonRepository
+import com.arsiu.eduhub.lesson.application.port.LessonService
 import com.arsiu.eduhub.lesson.domain.Lesson
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
@@ -41,7 +41,7 @@ class LessonServiceImpl(
     override fun findAll(): Flux<Lesson> =
         lessonRepository.findAll()
             .flatMap { lesson ->
-                assignmentService.findAll()
+                assignmentService.findAssignmentsForLesson(lesson.id)
                     .collectList()
                     .map { assignments ->
                         lesson.assignments = assignments.toMutableList()

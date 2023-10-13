@@ -1,7 +1,7 @@
 package com.arsiu.eduhub.assignment.infrastructure.adapters.handlers.assignment
 
-import com.arsiu.eduhub.assignment.application.mapper.AssignmentProtoMapper
-import com.arsiu.eduhub.assignment.application.ports.AssignmentService
+import com.arsiu.eduhub.assignment.infrastructure.mapper.AssignmentProtoMapper
+import com.arsiu.eduhub.assignment.application.port.AssignmentService
 import com.arsiu.eduhub.assignment.domain.Assignment
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.FindAllAssignmentRequest
 import com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment.FindAllAssignmentResponse

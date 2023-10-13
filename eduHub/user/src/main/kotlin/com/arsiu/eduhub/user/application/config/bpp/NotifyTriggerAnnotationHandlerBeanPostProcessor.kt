@@ -3,7 +3,7 @@ package com.arsiu.eduhub.user.application.config.bpp
 import com.arsiu.eduhub.common.application.annotation.NotifyTrigger
 import com.arsiu.eduhub.common.infrastructure.nontification.mail.EmailParameters
 import com.arsiu.eduhub.common.infrastructure.nontification.mail.EmailServiceImpl
-import com.arsiu.eduhub.user.application.ports.UserService
+import com.arsiu.eduhub.user.application.port.UserService
 import com.arsiu.eduhub.user.domain.Role
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.config.BeanPostProcessor

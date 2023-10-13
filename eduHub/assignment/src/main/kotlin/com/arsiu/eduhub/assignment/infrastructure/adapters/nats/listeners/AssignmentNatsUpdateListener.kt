@@ -2,7 +2,7 @@ package com.arsiu.eduhub.assignment.infrastructure.adapters.nats.listeners
 
 import com.arsiu.eduhub.assignment.infrastructure.adapters.handlers.assignment.FindAllStreamHandler
 import com.arsiu.eduhub.assignment.infrastructure.shared.streams.SharedAssignmentStream
-import com.arsiu.eduhub.common.application.ports.nats.NatsListener
+import com.arsiu.eduhub.common.application.port.nats.NatsListener
 import com.arsiu.eduhub.v2.assignmentsvc.NatsSubject.ASSIGNMENT_UPDATE_BUS
 import com.arsiu.eduhub.v2.assignmentsvc.commonmodels.assignment.AssignmentProto
 import com.google.protobuf.Parser

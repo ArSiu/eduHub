@@ -1,11 +1,11 @@
 package com.arsiu.eduhub.chapter.application.services
 
-import com.arsiu.eduhub.chapter.application.ports.ChapterRepository
-import com.arsiu.eduhub.chapter.application.ports.ChapterService
+import com.arsiu.eduhub.chapter.application.port.ChapterRepository
+import com.arsiu.eduhub.chapter.application.port.ChapterService
 import com.arsiu.eduhub.chapter.domain.Chapter
 import com.arsiu.eduhub.common.application.annotation.NotifyTrigger
 import com.arsiu.eduhub.common.application.exception.NotFoundException
-import com.arsiu.eduhub.lesson.application.ports.LessonService
+import com.arsiu.eduhub.lesson.application.port.LessonService
 import com.arsiu.eduhub.lesson.domain.Lesson
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
@@ -41,7 +41,7 @@ class ChapterServiceImpl(
     override fun findAll(): Flux<Chapter> =
         chapterRepository.findAll()
             .flatMap { chapter ->
-                lessonService.findAll()
+                lessonService.findLessonsForChapter(chapter.id)
                     .collectList()
                     .map { lessons ->
                         chapter.lessons = lessons.toMutableList()

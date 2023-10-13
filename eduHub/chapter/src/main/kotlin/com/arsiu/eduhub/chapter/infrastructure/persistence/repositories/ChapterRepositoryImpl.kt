@@ -1,9 +1,9 @@
 package com.arsiu.eduhub.chapter.infrastructure.persistence.repositories
 
-import com.arsiu.eduhub.chapter.application.mapper.ChapterToEntityMapper
-import com.arsiu.eduhub.chapter.application.ports.ChapterRepository
+import com.arsiu.eduhub.chapter.infrastructure.mapper.ChapterToEntityMapper
+import com.arsiu.eduhub.chapter.application.port.ChapterRepository
 import com.arsiu.eduhub.chapter.domain.Chapter
-import com.arsiu.eduhub.chapter.infrastructure.persistence.entity.ChapterEntity
+import com.arsiu.eduhub.chapter.infrastructure.persistence.entity.MongoChapter
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
@@ -24,12 +24,12 @@ class ChapterRepositoryImpl(
         }
 
     override fun findAll(): Flux<Chapter> =
-        reactiveMongoTemplate.findAll(ChapterEntity::class.java).map {
+        reactiveMongoTemplate.findAll(MongoChapter::class.java).map {
             mapper.toModel(it)
         }
 
     override fun findById(id: String): Mono<Chapter> =
-        reactiveMongoTemplate.findById(id, ChapterEntity::class.java).map {
+        reactiveMongoTemplate.findById(id, MongoChapter::class.java).map {
             mapper.toModel(it)
         }
 
@@ -42,7 +42,7 @@ class ChapterRepositoryImpl(
             .set("name", entity.name)
             .set("lessons", entity.lessons)
 
-        return reactiveMongoTemplate.upsert(query, update, ChapterEntity::class.java)
+        return reactiveMongoTemplate.upsert(query, update, MongoChapter::class.java)
             .thenReturn(model)
     }
 
@@ -50,7 +50,7 @@ class ChapterRepositoryImpl(
         reactiveMongoTemplate.remove(mapper.toEntityWithId(model)).then()
 
     override fun find(query: Query): Flux<Chapter> =
-        reactiveMongoTemplate.find(query, ChapterEntity::class.java).map {
+        reactiveMongoTemplate.find(query, MongoChapter::class.java).map {
             mapper.toModel(it)
         }
 

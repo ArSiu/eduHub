@@ -1,8 +1,8 @@
 package com.arsiu.eduhub.user.application.services
 
 import com.arsiu.eduhub.common.application.exception.NotFoundException
-import com.arsiu.eduhub.user.application.ports.UserRepository
-import com.arsiu.eduhub.user.application.ports.UserService
+import com.arsiu.eduhub.user.application.port.UserRepository
+import com.arsiu.eduhub.user.application.port.UserService
 import com.arsiu.eduhub.user.domain.User
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux

@@ -1,6 +1,6 @@
 package com.arsiu.eduhub.common.application.config.bpp
 
-import com.arsiu.eduhub.common.application.ports.nats.NatsListener
+import com.arsiu.eduhub.common.application.port.nats.NatsListener
 import com.google.protobuf.GeneratedMessageV3
 import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.stereotype.Component

@@ -1,14 +1,13 @@
 package com.arsiu.eduhub.it.base
 
-import com.arsiu.eduhub.assignment.application.mapper.AssignmentProtoMapper
-import com.arsiu.eduhub.assignment.domain.Assignment
+import com.arsiu.eduhub.assignment.infrastructure.mapper.AssignmentProtoMapper
 import com.arsiu.eduhub.assignment.infrastructure.adapters.handlers.assignment.DeleteByIdHandler
 import com.arsiu.eduhub.assignment.infrastructure.adapters.handlers.assignment.FindAllHandler
 import com.arsiu.eduhub.assignment.infrastructure.adapters.handlers.assignment.FindAllStreamHandler
 import com.arsiu.eduhub.assignment.infrastructure.adapters.handlers.assignment.FindByIdHandler
 import com.arsiu.eduhub.assignment.infrastructure.adapters.handlers.assignment.UpdateHandler
-import com.arsiu.eduhub.assignment.application.ports.AssignmentService
-import com.arsiu.eduhub.assignment.infrastructure.persistence.entity.AssignmentEntity
+import com.arsiu.eduhub.assignment.application.port.AssignmentService
+import com.arsiu.eduhub.assignment.infrastructure.persistence.entity.MongoAssignment
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -56,7 +55,7 @@ abstract class BaseAssignmentTest {
 
         val update = Update().set("name", assignmentName).set("lessonId", assignmentLessonId)
 
-        mongoTemplate.upsert(query, update, AssignmentEntity::class.java).block()
+        mongoTemplate.upsert(query, update, MongoAssignment::class.java).block()
     }
 
 }

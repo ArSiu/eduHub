@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono
 
 @Component
 class DeleteByIdHandler(
-    private val service: com.arsiu.eduhub.assignment.application.ports.AssignmentService
+    private val service: com.arsiu.eduhub.assignment.application.port.AssignmentService
 ) : AssignmentHandler<DeleteByIdAssignmentRequest, DeleteByIdAssignmentResponse>() {
 
     fun handleDelete(request: DeleteByIdAssignmentRequest): Mono<DeleteByIdAssignmentResponse> =

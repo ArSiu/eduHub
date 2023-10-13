@@ -1,29 +1,20 @@
 package com.arsiu.eduhub.course.domain
 
 import com.arsiu.eduhub.chapter.domain.Chapter
-import lombok.AllArgsConstructor
-import lombok.EqualsAndHashCode
-import lombok.Getter
-import lombok.NoArgsConstructor
-import lombok.Setter
 
+data class Course (
 
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode
-@Getter
-@Setter
-class Course {
+    var id: String = "",
 
-    lateinit var id: String
+    var ownerId: String = "",
 
-    lateinit var ownerId: String
+    var chapters: MutableList<Chapter> = mutableListOf(),
 
-    lateinit var chapters: MutableList<Chapter>
-
-    lateinit var students: MutableSet<Any>
+    var students: MutableSet<Any> = mutableSetOf(),
 
     var name: String = ""
+
+){
 
     override fun toString(): String = " Course \"$name\" by "
 

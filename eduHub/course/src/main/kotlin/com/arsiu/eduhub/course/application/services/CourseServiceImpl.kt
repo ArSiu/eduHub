@@ -1,11 +1,11 @@
 package com.arsiu.eduhub.course.application.services
 
-import com.arsiu.eduhub.chapter.application.ports.ChapterService
+import com.arsiu.eduhub.chapter.application.port.ChapterService
 import com.arsiu.eduhub.chapter.domain.Chapter
 import com.arsiu.eduhub.common.application.annotation.NotifyTrigger
 import com.arsiu.eduhub.common.application.exception.NotFoundException
-import com.arsiu.eduhub.course.application.ports.CourseRepository
-import com.arsiu.eduhub.course.application.ports.CourseService
+import com.arsiu.eduhub.course.application.port.CourseRepository
+import com.arsiu.eduhub.course.application.port.CourseService
 import com.arsiu.eduhub.course.domain.Course
 import org.springframework.data.domain.Sort.Direction.DESC
 import org.springframework.data.mongodb.core.aggregation.Aggregation
@@ -43,7 +43,7 @@ class CourseServiceImpl(
     override fun findAll(): Flux<Course> =
         courseRepository.findAll()
             .flatMap { course ->
-                chapterService.findAll()
+                chapterService.findChaptersForCourse(course.id)
                     .collectList()
                     .map { chapters ->
                         course.chapters = chapters.toMutableList()
