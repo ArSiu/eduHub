@@ -1,8 +1,8 @@
 package com.arsiu.eduhub.user.infrastructure.persistence.repositories
 
-import com.arsiu.eduhub.user.infrastructure.mapper.UserToEntityMapper
 import com.arsiu.eduhub.user.application.port.UserRepository
 import com.arsiu.eduhub.user.domain.User
+import com.arsiu.eduhub.user.infrastructure.mapper.UserToEntityMapper
 import com.arsiu.eduhub.user.infrastructure.persistence.entity.MongoUser
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria

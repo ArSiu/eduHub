@@ -1,8 +1,8 @@
 package com.arsiu.eduhub.chapter.infrastructure.mapper
 
+import com.arsiu.eduhub.chapter.domain.Chapter
 import com.arsiu.eduhub.chapter.infrastructure.dto.request.ChapterDtoRequest
 import com.arsiu.eduhub.chapter.infrastructure.dto.response.ChapterDtoResponse
-import com.arsiu.eduhub.chapter.domain.Chapter
 import com.arsiu.eduhub.chapter.infrastructure.persistence.entity.MongoChapter
 import com.arsiu.eduhub.lesson.infrastructure.mapper.LessonMapper
 import org.mapstruct.IterableMapping

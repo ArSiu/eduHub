@@ -1,22 +1,13 @@
 package com.arsiu.eduhub.assignment.infrastructure.persistence.entity
 
-import lombok.AllArgsConstructor
-import lombok.EqualsAndHashCode
-import lombok.Getter
-import lombok.NoArgsConstructor
-import lombok.Setter
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.Field
 import org.springframework.data.mongodb.core.mapping.FieldType.OBJECT_ID
 
 @Document("assignment")
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode
-@Getter
-@Setter
 class MongoAssignment {
+
     @Id
     lateinit var id: String
 
@@ -26,4 +17,5 @@ class MongoAssignment {
     var name: String = ""
 
     override fun toString(): String = " Assignment \"$name\""
+
 }

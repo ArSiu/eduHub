@@ -2,7 +2,7 @@ package com.arsiu.eduhub.course.domain
 
 import com.arsiu.eduhub.chapter.domain.Chapter
 
-data class Course (
+data class Course(
 
     var id: String = "",
 
@@ -14,7 +14,7 @@ data class Course (
 
     var name: String = ""
 
-){
+) {
 
     override fun toString(): String = " Course \"$name\" by "
 

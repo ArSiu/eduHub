@@ -1,8 +1,8 @@
 package com.arsiu.eduhub.lesson.infrastructure.persistence.repositories
 
-import com.arsiu.eduhub.lesson.infrastructure.mapper.LessonToEntityMapper
 import com.arsiu.eduhub.lesson.application.port.LessonRepository
 import com.arsiu.eduhub.lesson.domain.Lesson
+import com.arsiu.eduhub.lesson.infrastructure.mapper.LessonToEntityMapper
 import com.arsiu.eduhub.lesson.infrastructure.persistence.entity.MongoLesson
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria

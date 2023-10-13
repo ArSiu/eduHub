@@ -1,8 +1,8 @@
 package com.arsiu.eduhub.chapter.infrastructure.persistence.repositories
 
-import com.arsiu.eduhub.chapter.infrastructure.mapper.ChapterToEntityMapper
 import com.arsiu.eduhub.chapter.application.port.ChapterRepository
 import com.arsiu.eduhub.chapter.domain.Chapter
+import com.arsiu.eduhub.chapter.infrastructure.mapper.ChapterToEntityMapper
 import com.arsiu.eduhub.chapter.infrastructure.persistence.entity.MongoChapter
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria

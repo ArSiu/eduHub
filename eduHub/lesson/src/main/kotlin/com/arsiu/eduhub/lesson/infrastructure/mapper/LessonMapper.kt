@@ -1,9 +1,9 @@
 package com.arsiu.eduhub.lesson.infrastructure.mapper
 
 import com.arsiu.eduhub.assignment.infrastructure.mapper.AssignmentRestMapper
+import com.arsiu.eduhub.lesson.domain.Lesson
 import com.arsiu.eduhub.lesson.infrastructure.dto.request.LessonDtoRequest
 import com.arsiu.eduhub.lesson.infrastructure.dto.response.LessonDtoResponse
-import com.arsiu.eduhub.lesson.domain.Lesson
 import com.arsiu.eduhub.lesson.infrastructure.persistence.entity.MongoLesson
 import org.mapstruct.IterableMapping
 import org.mapstruct.Mapper

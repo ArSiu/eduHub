@@ -1,11 +1,6 @@
 package com.arsiu.eduhub.course.infrastructure.persistence.entity
 
 import com.arsiu.eduhub.chapter.domain.Chapter
-import lombok.AllArgsConstructor
-import lombok.EqualsAndHashCode
-import lombok.Getter
-import lombok.NoArgsConstructor
-import lombok.Setter
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.DocumentReference
@@ -13,11 +8,6 @@ import org.springframework.data.mongodb.core.mapping.Field
 import org.springframework.data.mongodb.core.mapping.FieldType.OBJECT_ID
 
 @Document("course")
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode
-@Getter
-@Setter
 class MongoCourse {
 
     @Id

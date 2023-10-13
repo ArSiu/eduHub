@@ -1,8 +1,8 @@
 package com.arsiu.eduhub.course.infrastructure.persistence.repositories
 
-import com.arsiu.eduhub.course.infrastructure.mapper.CourseToEntityMapper
 import com.arsiu.eduhub.course.application.port.CourseRepository
 import com.arsiu.eduhub.course.domain.Course
+import com.arsiu.eduhub.course.infrastructure.mapper.CourseToEntityMapper
 import com.arsiu.eduhub.course.infrastructure.persistence.entity.MongoCourse
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.aggregation.Aggregation

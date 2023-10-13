@@ -1,9 +1,9 @@
 package com.arsiu.eduhub.chapter.infrastructure.rest
 
+import com.arsiu.eduhub.chapter.application.port.ChapterService
 import com.arsiu.eduhub.chapter.infrastructure.dto.request.ChapterDtoRequest
 import com.arsiu.eduhub.chapter.infrastructure.dto.response.ChapterDtoResponse
 import com.arsiu.eduhub.chapter.infrastructure.mapper.ChapterMapper
-import com.arsiu.eduhub.chapter.application.port.ChapterService
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping

@@ -1,9 +1,9 @@
 package com.arsiu.eduhub.user.infrastructure.rest
 
+import com.arsiu.eduhub.user.application.port.UserService
 import com.arsiu.eduhub.user.infrastructure.dto.request.UserDtoRequest
 import com.arsiu.eduhub.user.infrastructure.dto.response.UserDtoResponse
 import com.arsiu.eduhub.user.infrastructure.mapper.UserMapper
-import com.arsiu.eduhub.user.application.port.UserService
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping

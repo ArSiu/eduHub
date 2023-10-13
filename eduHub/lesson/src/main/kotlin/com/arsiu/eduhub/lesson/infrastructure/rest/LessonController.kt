@@ -1,9 +1,9 @@
 package com.arsiu.eduhub.lesson.infrastructure.rest
 
+import com.arsiu.eduhub.lesson.application.port.LessonService
 import com.arsiu.eduhub.lesson.infrastructure.dto.request.LessonDtoRequest
 import com.arsiu.eduhub.lesson.infrastructure.dto.response.LessonDtoResponse
 import com.arsiu.eduhub.lesson.infrastructure.mapper.LessonMapper
-import com.arsiu.eduhub.lesson.application.port.LessonService
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping

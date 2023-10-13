@@ -1,8 +1,8 @@
 package com.arsiu.eduhub.assignment.infrastructure.mapper
 
+import com.arsiu.eduhub.assignment.domain.Assignment
 import com.arsiu.eduhub.assignment.infrastructure.dto.request.AssignmentDtoRequest
 import com.arsiu.eduhub.assignment.infrastructure.dto.response.AssignmentDtoResponse
-import com.arsiu.eduhub.assignment.domain.Assignment
 import com.arsiu.eduhub.assignment.infrastructure.persistence.entity.MongoAssignment
 import com.arsiu.eduhub.v2.assignmentsvc.commonmodels.assignment.AssignmentProto
 import org.mapstruct.BeanMapping

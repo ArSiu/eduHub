@@ -19,8 +19,6 @@ plugins {
     kotlin("jvm")
     kotlin("kapt")
     kotlin("plugin.spring")
-    kotlin("plugin.lombok")
-    id("io.freefair.lombok")
 }
 
 dependencies {
@@ -90,7 +88,6 @@ subprojects {
     apply(plugin = "org.springframework.boot")
     apply(plugin = "io.spring.dependency-management")
     apply(plugin = "io.gitlab.arturbosch.detekt")
-    apply(plugin = "io.freefair.lombok")
     apply(plugin = "com.google.protobuf")
 
     dependencies {

@@ -2,9 +2,9 @@ package com.arsiu.eduhub.user.infrastructure.mapper
 
 
 import com.arsiu.eduhub.course.infrastructure.mapper.CourseMapper
+import com.arsiu.eduhub.user.domain.User
 import com.arsiu.eduhub.user.infrastructure.dto.request.UserDtoRequest
 import com.arsiu.eduhub.user.infrastructure.dto.response.UserDtoResponse
-import com.arsiu.eduhub.user.domain.User
 import com.arsiu.eduhub.user.infrastructure.persistence.entity.MongoUser
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
