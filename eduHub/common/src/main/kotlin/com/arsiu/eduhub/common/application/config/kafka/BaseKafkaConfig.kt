@@ -1,4 +1,4 @@
-package com.arsiu.eduhub.assignment.infrastructure.adapters.kafka.config
+package com.arsiu.eduhub.common.application.config.kafka
 
 import com.google.protobuf.GeneratedMessageV3
 import io.confluent.kafka.serializers.protobuf.KafkaProtobufDeserializer

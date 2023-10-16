@@ -1,6 +1,6 @@
 package com.arsiu.eduhub.assignment.infrastructure.persistence.repositories
 
-import com.arsiu.eduhub.assignment.application.port.AssignmentRepository
+import com.arsiu.eduhub.assignment.application.port.AssignmentMongoRepository
 import com.arsiu.eduhub.assignment.domain.Assignment
 import com.arsiu.eduhub.assignment.infrastructure.mapper.AssignmentToEntityMapper
 import com.arsiu.eduhub.assignment.infrastructure.persistence.entity.MongoAssignment
@@ -13,10 +13,10 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Repository
-class AssignmentRepositoryImpl(
+class AssignmentMongoRepositoryImpl(
     private val reactiveMongoTemplate: ReactiveMongoTemplate,
     private val mapper: AssignmentToEntityMapper
-) : AssignmentRepository {
+) : AssignmentMongoRepository {
 
     override fun save(model: Assignment): Mono<Assignment> =
         reactiveMongoTemplate.save(mapper.toEntity(model))

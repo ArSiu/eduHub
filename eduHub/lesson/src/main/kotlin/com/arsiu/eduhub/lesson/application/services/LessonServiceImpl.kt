@@ -4,7 +4,7 @@ import com.arsiu.eduhub.assignment.application.port.AssignmentService
 import com.arsiu.eduhub.assignment.domain.Assignment
 import com.arsiu.eduhub.common.application.annotation.NotifyTrigger
 import com.arsiu.eduhub.common.application.exception.NotFoundException
-import com.arsiu.eduhub.lesson.application.port.LessonRepository
+import com.arsiu.eduhub.lesson.application.port.LessonMongoRepository
 import com.arsiu.eduhub.lesson.application.port.LessonService
 import com.arsiu.eduhub.lesson.domain.Lesson
 import org.springframework.data.mongodb.core.query.Criteria
@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono
 
 @Service("lessonService")
 class LessonServiceImpl(
-    private val lessonRepository: LessonRepository,
+    private val lessonRepository: LessonMongoRepository,
     private val assignmentService: AssignmentService,
 ) : LessonService {
 

@@ -1,6 +1,6 @@
 package com.arsiu.eduhub.chapter.infrastructure.persistence.repositories
 
-import com.arsiu.eduhub.chapter.application.port.ChapterRepository
+import com.arsiu.eduhub.chapter.application.port.ChapterMongoRepository
 import com.arsiu.eduhub.chapter.domain.Chapter
 import com.arsiu.eduhub.chapter.infrastructure.mapper.ChapterToEntityMapper
 import com.arsiu.eduhub.chapter.infrastructure.persistence.entity.MongoChapter
@@ -13,10 +13,10 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Repository
-class ChapterRepositoryImpl(
+class ChapterMongoRepositoryImpl(
     private val reactiveMongoTemplate: ReactiveMongoTemplate,
     private val mapper: ChapterToEntityMapper
-) : ChapterRepository {
+) : ChapterMongoRepository {
 
     override fun save(model: Chapter): Mono<Chapter> =
         reactiveMongoTemplate.save(mapper.toEntity(model)).map {

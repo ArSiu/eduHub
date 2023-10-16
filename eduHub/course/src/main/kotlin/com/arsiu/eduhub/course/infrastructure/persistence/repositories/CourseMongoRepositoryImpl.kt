@@ -1,6 +1,6 @@
 package com.arsiu.eduhub.course.infrastructure.persistence.repositories
 
-import com.arsiu.eduhub.course.application.port.CourseRepository
+import com.arsiu.eduhub.course.application.port.CourseMongoRepository
 import com.arsiu.eduhub.course.domain.Course
 import com.arsiu.eduhub.course.infrastructure.mapper.CourseToEntityMapper
 import com.arsiu.eduhub.course.infrastructure.persistence.entity.MongoCourse
@@ -14,10 +14,10 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Repository
-class CourseRepositoryImpl(
+class CourseMongoRepositoryImpl(
     private val reactiveMongoTemplate: ReactiveMongoTemplate,
     private val mapper: CourseToEntityMapper
-) : CourseRepository {
+) : CourseMongoRepository {
 
     override fun save(model: Course): Mono<Course> =
         reactiveMongoTemplate.save(mapper.toEntity(model)).map {

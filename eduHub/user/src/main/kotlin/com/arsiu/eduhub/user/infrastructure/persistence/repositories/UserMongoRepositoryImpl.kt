@@ -1,6 +1,6 @@
 package com.arsiu.eduhub.user.infrastructure.persistence.repositories
 
-import com.arsiu.eduhub.user.application.port.UserRepository
+import com.arsiu.eduhub.user.application.port.UserMongoRepository
 import com.arsiu.eduhub.user.domain.User
 import com.arsiu.eduhub.user.infrastructure.mapper.UserToEntityMapper
 import com.arsiu.eduhub.user.infrastructure.persistence.entity.MongoUser
@@ -13,10 +13,10 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Repository
-class UserRepositoryImpl(
+class UserMongoRepositoryImpl(
     private val reactiveMongoTemplate: ReactiveMongoTemplate,
     private val mapper: UserToEntityMapper
-) : UserRepository {
+) : UserMongoRepository {
 
     override fun save(model: User): Mono<User> =
         reactiveMongoTemplate.save(mapper.toEntity(model))

@@ -4,7 +4,8 @@ import com.arsiu.eduhub.chapter.application.port.ChapterService
 import com.arsiu.eduhub.chapter.domain.Chapter
 import com.arsiu.eduhub.common.application.annotation.NotifyTrigger
 import com.arsiu.eduhub.common.application.exception.NotFoundException
-import com.arsiu.eduhub.course.application.port.CourseRepository
+import com.arsiu.eduhub.course.application.port.CourseMongoRepository
+import com.arsiu.eduhub.course.application.port.CourseRedisRepository
 import com.arsiu.eduhub.course.application.port.CourseService
 import com.arsiu.eduhub.course.domain.Course
 import org.springframework.data.domain.Sort.Direction.DESC
@@ -16,16 +17,18 @@ import reactor.core.publisher.Mono
 
 @Service
 class CourseServiceImpl(
-    private val courseRepository: CourseRepository,
+    private val courseMongoRepository: CourseMongoRepository,
     private val chapterService: ChapterService,
+    private val courseRedisRepository: CourseRedisRepository
 ) : CourseService {
 
     @NotifyTrigger("New Course Available ")
     override fun create(entity: Course): Mono<Course> {
         resetField(entity, "id")
-        return courseRepository.save(entity)
+        return courseMongoRepository.save(entity)
             .flatMap { course -> updateChapterIdsAndSave(course) }
-            .flatMap(courseRepository::upsert)
+            .flatMap(courseMongoRepository::upsert)
+            .doOnSuccess { createdEntity -> courseRedisRepository.save(createdEntity).subscribe() }
     }
 
     private fun updateChapterIdsAndSave(course: Course): Mono<Course> {
@@ -41,26 +44,34 @@ class CourseServiceImpl(
     }
 
     override fun findAll(): Flux<Course> =
-        courseRepository.findAll()
-            .flatMap { course ->
-                chapterService.findChaptersForCourse(course.id)
-                    .collectList()
-                    .map { chapters ->
-                        course.chapters = chapters.toMutableList()
-                        course
+        courseRedisRepository.findAll()
+            .switchIfEmpty(
+                courseMongoRepository.findAll()
+                    .flatMap { course ->
+                        chapterService.findChaptersForCourse(course.id)
+                            .collectList()
+                            .map { chapters ->
+                                course.chapters = chapters.toMutableList()
+                                course
+                            }
                     }
-            }
+                    .doOnNext { courseRedisRepository.save(it).subscribe() }
+            )
 
     override fun findById(id: String): Mono<Course> =
-        courseRepository.findById(id)
-            .flatMap { course ->
-                chapterService.findChaptersForCourse(course.id)
-                    .collectList()
-                    .map { chapters ->
-                        course.chapters = chapters.toMutableList()
-                        course
+        courseRedisRepository.findById(id)
+            .switchIfEmpty(
+                courseMongoRepository.findById(id)
+                    .flatMap { course ->
+                        chapterService.findChaptersForCourse(course.id)
+                            .collectList()
+                            .map { chapters ->
+                                course.chapters = chapters.toMutableList()
+                                courseRedisRepository.save(course).subscribe()
+                                course
+                            }
                     }
-            }
+            )
             .switchIfEmpty(Mono.error(NotFoundException("Course with ID $id not found")))
 
     override fun update(entity: Course): Mono<Course> =
@@ -83,8 +94,11 @@ class CourseServiceImpl(
 
                 deleteChapters.thenMany(updateChapters)
                     .then(Mono.defer {
-                        courseRepository.upsert(entity)
+                        courseMongoRepository.upsert(entity)
                     })
+                    .doOnSuccess { updatedEntity ->
+                        courseRedisRepository.save(updatedEntity).subscribe()
+                    }
             } else {
                 Mono.just(existingEntity)
             }
@@ -94,7 +108,8 @@ class CourseServiceImpl(
         findById(id).flatMap {
             Flux.fromIterable(it.chapters)
                 .flatMap { chapterService.delete(it.id) }
-                .then(courseRepository.remove(it))
+                .then(courseMongoRepository.remove(it))
+                .then(courseRedisRepository.deleteById(id))
         }
 
     override fun sortCoursesByInners(): Flux<Course> {
@@ -109,7 +124,7 @@ class CourseServiceImpl(
             Aggregation.project("_id")
         )
 
-        return courseRepository.aggregate(aggregation)
+        return courseMongoRepository.aggregate(aggregation)
             .flatMap { courseAggregated ->
                 findById(courseAggregated.id)
             }

@@ -18,6 +18,7 @@ class TestContainers : BeforeAllCallback {
             DockerComposeContainer<Nothing>(File("../docker-compose.yml")).apply {
                 withExposedService("mongodb", 27017)
                 withExposedService("nats", 4222)
+                withExposedService("redis", 6379)
                 withExposedService("zookeeper", 2181)
                 withExposedService("kafka", 9092)
                 withExposedService("schema-registry", 8081)
@@ -27,9 +28,29 @@ class TestContainers : BeforeAllCallback {
 
     override fun beforeAll(context: ExtensionContext?) {
         environment.start()
-        System.setProperty("spring.data.mongodb.username", "root")
-        System.setProperty("spring.data.mongodb.password", "root")
-        System.setProperty("spring.data.mongodb.database", "myDb")
+
+        // MongoDB settings
+        setMongoDbProperties("root", "root", "myDb")
+
+        // NATS settings
+        setNatsProperties("nats", 4222)
+
+        // Kafka settings
+        setKafkaProperties("localhost", "kafka", 9092, "schema-registry", 8081)
+
+        // Redis settings
+        setRedisProperties("localhost", "redis", 6379)
+
+        environment.waitingFor(
+            "kafka",
+            Wait.forLogMessage(".*Assignment received from.*\\s", 1)
+        )
+    }
+
+    private fun setMongoDbProperties(username: String, password: String, database: String) {
+        System.setProperty("spring.data.mongodb.username", username)
+        System.setProperty("spring.data.mongodb.password", password)
+        System.setProperty("spring.data.mongodb.database", database)
         System.setProperty(
             "spring.data.mongodb.host",
             environment.getServiceHost("mongodb", 27017)
@@ -38,16 +59,41 @@ class TestContainers : BeforeAllCallback {
             "spring.data.mongodb.port",
             environment.getServicePort("mongodb", 27017).toString()
         )
+    }
+
+    private fun setNatsProperties(serviceName: String, port: Int) {
         System.setProperty(
-            "nats.url", "nats://${environment.getServiceHost("nats", 4222)}:" +
-                    "${environment.getServicePort("nats", 4222)}"
+            "nats.url",
+            "nats://${
+                environment.getServiceHost(serviceName, port)
+            }:${
+                environment.getServicePort(serviceName, port)
+            }"
         )
-        System.setProperty("spring.kafka.bootstrap-servers", "localhost:${environment.getServicePort("kafka", 9092)}")
+    }
+
+    private fun setKafkaProperties(
+        host: String,
+        kafkaServiceName: String,
+        kafkaPort: Int,
+        registryServiceName: String,
+        registryPort: Int
+    ) {
+        System.setProperty(
+            "spring.kafka.bootstrap-servers",
+            "$host:${environment.getServicePort(kafkaServiceName, kafkaPort)}"
+        )
         System.setProperty(
             "spring.kafka.properties.schema.registry.url",
-            "http://localhost:${environment.getServicePort("schema-registry", 8081)}"
+            "http://$host:${environment.getServicePort(registryServiceName, registryPort)}"
         )
-        environment.waitingFor("kafka", Wait.forLogMessage(".*Assignment received from.*\\s", 1))
+    }
+
+    private fun setRedisProperties(host: String, serviceName: String, port: Int) {
+        System.setProperty("spring.data.redis.host", host)
+        System.setProperty("spring.data.redis.port", "${
+            environment.getServicePort(serviceName, port)
+        }")
     }
 
 }

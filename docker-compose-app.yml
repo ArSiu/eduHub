@@ -54,6 +54,13 @@ services:
     ports:
       - "8081:8081"
 
+  redis:
+    image: "redis:latest"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
   app1:
     build:
       context: .
@@ -107,3 +114,4 @@ volumes:
   zookeeper-data:
   zookeeper-log:
   kafka-data:
+  redis-data:

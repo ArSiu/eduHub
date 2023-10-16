@@ -1,10 +1,10 @@
-package com.arsiu.eduhub.common.application.port.repository
+package com.arsiu.eduhub.common.application.port.repository.mongo
 
 import org.springframework.data.mongodb.core.query.Query
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
-interface GeneralRepository<T, ID> {
+interface GeneralMongoRepository<T, ID> {
 
     fun save(model: T): Mono<T>
 

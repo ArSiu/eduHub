@@ -1,6 +1,6 @@
 package com.arsiu.eduhub.assignment.application.services
 
-import com.arsiu.eduhub.assignment.application.port.AssignmentRepository
+import com.arsiu.eduhub.assignment.application.port.AssignmentMongoRepository
 import com.arsiu.eduhub.assignment.application.port.AssignmentService
 import com.arsiu.eduhub.assignment.domain.Assignment
 import com.arsiu.eduhub.common.application.annotation.NotifyTrigger
@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono
 
 @Service
 class AssignmentServiceImpl(
-    private val assignmentRepository: AssignmentRepository,
+    private val assignmentRepository: AssignmentMongoRepository,
 ) : AssignmentService {
 
     override fun create(entity: Assignment): Mono<Assignment> {

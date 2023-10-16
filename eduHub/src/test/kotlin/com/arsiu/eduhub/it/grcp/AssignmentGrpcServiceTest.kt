@@ -1,8 +1,8 @@
 package com.arsiu.eduhub.it.grcp
 
+import com.arsiu.eduhub.assignment.domain.Assignment
 import com.arsiu.eduhub.it.base.BaseAssignmentTest
 import com.arsiu.eduhub.it.testcontainers.TestContainers
-import com.arsiu.eduhub.assignment.domain.Assignment
 import com.arsiu.eduhub.v2.assignmentsvc.ReactorAssignmentServiceGrpc
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.DeleteByIdAssignmentRequest
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.FindAllAssignmentRequest

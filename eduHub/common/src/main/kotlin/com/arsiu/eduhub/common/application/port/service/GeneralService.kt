@@ -1,6 +1,6 @@
 package com.arsiu.eduhub.common.application.port.service
 
-import com.arsiu.eduhub.common.application.port.repository.GeneralRepository
+import com.arsiu.eduhub.common.application.port.repository.mongo.GeneralMongoRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import reactor.core.publisher.Flux
@@ -10,7 +10,7 @@ import java.lang.reflect.Field
 interface GeneralService<T, ID> {
 
     val logger: Logger
-        get() = LoggerFactory.getLogger(GeneralRepository::class.java)
+        get() = LoggerFactory.getLogger(GeneralMongoRepository::class.java)
 
     fun create(entity: T): Mono<T>
 

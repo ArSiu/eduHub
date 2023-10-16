@@ -1,6 +1,6 @@
 package com.arsiu.eduhub.chapter.application.services
 
-import com.arsiu.eduhub.chapter.application.port.ChapterRepository
+import com.arsiu.eduhub.chapter.application.port.ChapterMongoRepository
 import com.arsiu.eduhub.chapter.application.port.ChapterService
 import com.arsiu.eduhub.chapter.domain.Chapter
 import com.arsiu.eduhub.common.application.annotation.NotifyTrigger
@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono
 
 @Service
 class ChapterServiceImpl(
-    private val chapterRepository: ChapterRepository,
+    private val chapterRepository: ChapterMongoRepository,
     private val lessonService: LessonService,
 ) : ChapterService {
 
