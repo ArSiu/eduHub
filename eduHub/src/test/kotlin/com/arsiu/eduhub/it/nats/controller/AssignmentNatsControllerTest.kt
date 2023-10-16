@@ -2,7 +2,7 @@ package com.arsiu.eduhub.it.nats.controller
 
 import com.arsiu.eduhub.it.base.BaseAssignmentTest
 import com.arsiu.eduhub.it.testcontainers.TestContainers
-import com.arsiu.eduhub.model.Assignment
+import com.arsiu.eduhub.assignment.domain.Assignment
 import com.arsiu.eduhub.v2.assignmentsvc.NatsSubject.ASSIGNMENT_BY_ID
 import com.arsiu.eduhub.v2.assignmentsvc.NatsSubject.ASSIGNMENT_DELETE_BY_ID
 import com.arsiu.eduhub.v2.assignmentsvc.NatsSubject.ASSIGNMENT_FIND_ALL

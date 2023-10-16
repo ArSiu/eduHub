@@ -1,13 +1,13 @@
 package com.arsiu.eduhub.it.base
 
-import com.arsiu.eduhub.mapper.AssignmentNatsMapper
-import com.arsiu.eduhub.model.Assignment
-import com.arsiu.eduhub.protobuf.handlers.assignment.DeleteByIdHandler
-import com.arsiu.eduhub.protobuf.handlers.assignment.FindAllHandler
-import com.arsiu.eduhub.protobuf.handlers.assignment.FindAllStreamHandler
-import com.arsiu.eduhub.protobuf.handlers.assignment.FindByIdHandler
-import com.arsiu.eduhub.protobuf.handlers.assignment.UpdateHandler
-import com.arsiu.eduhub.service.AssignmentService
+import com.arsiu.eduhub.assignment.infrastructure.mapper.AssignmentProtoMapper
+import com.arsiu.eduhub.assignment.infrastructure.adapters.handlers.assignment.DeleteByIdHandler
+import com.arsiu.eduhub.assignment.infrastructure.adapters.handlers.assignment.FindAllHandler
+import com.arsiu.eduhub.assignment.infrastructure.adapters.handlers.assignment.FindAllStreamHandler
+import com.arsiu.eduhub.assignment.infrastructure.adapters.handlers.assignment.FindByIdHandler
+import com.arsiu.eduhub.assignment.infrastructure.adapters.handlers.assignment.UpdateHandler
+import com.arsiu.eduhub.assignment.application.port.AssignmentService
+import com.arsiu.eduhub.assignment.infrastructure.persistence.entity.MongoAssignment
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -23,7 +23,7 @@ abstract class BaseAssignmentTest {
     protected lateinit var mongoTemplate: ReactiveMongoTemplate
 
     @Autowired
-    protected lateinit var mapper: AssignmentNatsMapper
+    protected lateinit var mapper: AssignmentProtoMapper
 
     @Autowired
     protected lateinit var service: AssignmentService
@@ -47,13 +47,15 @@ abstract class BaseAssignmentTest {
 
     protected val assignmentName = "test"
 
+    protected val assignmentLessonId = "652666ede4f60c3a309ce12c"
+
     @BeforeEach
     fun setUpAssignment() {
         val query = Query.query(Criteria.where("id").`is`(assignmentId))
 
-        val update = Update().set("name", assignmentName)
+        val update = Update().set("name", assignmentName).set("lessonId", assignmentLessonId)
 
-        mongoTemplate.upsert(query, update, Assignment::class.java).block()
+        mongoTemplate.upsert(query, update, MongoAssignment::class.java).block()
     }
 
 }
