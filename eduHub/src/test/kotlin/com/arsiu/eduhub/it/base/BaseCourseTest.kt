@@ -2,7 +2,7 @@ package com.arsiu.eduhub.it.base
 
 import com.arsiu.eduhub.assignment.domain.Assignment
 import com.arsiu.eduhub.chapter.domain.Chapter
-import com.arsiu.eduhub.course.application.port.CourseRedisRepository
+import com.arsiu.eduhub.course.application.port.CourseCachingRepository
 import com.arsiu.eduhub.course.domain.Course
 import com.arsiu.eduhub.lesson.domain.Lesson
 import org.springframework.beans.factory.annotation.Autowired
@@ -12,7 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest
 abstract class BaseCourseTest {
 
     @Autowired
-    protected lateinit var courseRedisRepository: CourseRedisRepository
+    protected lateinit var courseRedisRepository: CourseCachingRepository
 
     protected final fun getTestCourse(): Course {
         val assignment = Assignment().apply {

@@ -12,6 +12,7 @@ data class AssignmentDtoRequest(
         message = "name must be at least 5 characters long"
     )
     @field:NotEmpty(message = "name is required")
-    val name: String,
+    val name: String
 
 )
+

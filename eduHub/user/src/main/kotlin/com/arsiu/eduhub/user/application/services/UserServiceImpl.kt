@@ -1,7 +1,7 @@
 package com.arsiu.eduhub.user.application.services
 
 import com.arsiu.eduhub.common.application.exception.NotFoundException
-import com.arsiu.eduhub.user.application.port.UserMongoRepository
+import com.arsiu.eduhub.user.application.port.UserPersistenceRepository
 import com.arsiu.eduhub.user.application.port.UserService
 import com.arsiu.eduhub.user.domain.User
 import org.springframework.stereotype.Service
@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono
 
 @Service
 class UserServiceImpl(
-    private val userRepository: UserMongoRepository
+    private val userRepository: UserPersistenceRepository
 ) : UserService {
 
     override fun findAll(): Flux<User> =

@@ -1,6 +1,6 @@
 package com.arsiu.eduhub.course.infrastructure.adapters.redis.config
 
-import com.arsiu.eduhub.common.application.config.redis.BaseRedisConfig
+import com.arsiu.eduhub.common.infrastructure.config.redis.BaseRedisConfig
 import com.arsiu.eduhub.course.infrastructure.persistence.entity.MongoCourse
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean

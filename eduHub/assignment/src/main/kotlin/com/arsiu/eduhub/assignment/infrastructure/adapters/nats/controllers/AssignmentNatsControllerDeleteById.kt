@@ -1,7 +1,7 @@
 package com.arsiu.eduhub.assignment.infrastructure.adapters.nats.controllers
 
 import com.arsiu.eduhub.assignment.infrastructure.adapters.handlers.assignment.DeleteByIdHandler
-import com.arsiu.eduhub.common.application.port.nats.NatsController
+import com.arsiu.eduhub.common.infrastructure.adapters.nats.NatsController
 import com.arsiu.eduhub.v2.assignmentsvc.NatsSubject.ASSIGNMENT_DELETE_BY_ID
 import com.arsiu.eduhub.v2.assignmentsvc.input.reqreply.assignment.DeleteByIdAssignmentRequest
 import com.arsiu.eduhub.v2.assignmentsvc.output.reqreply.assignment.DeleteByIdAssignmentResponse
