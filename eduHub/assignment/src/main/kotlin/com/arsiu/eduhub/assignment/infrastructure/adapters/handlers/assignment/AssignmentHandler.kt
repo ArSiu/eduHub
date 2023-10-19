@@ -1,6 +1,6 @@
 package com.arsiu.eduhub.assignment.infrastructure.adapters.handlers.assignment
 
-import com.arsiu.eduhub.common.application.port.protobuf.handler.Handler
+import com.arsiu.eduhub.common.infrastructure.adapters.protobuf.handler.Handler
 import com.arsiu.eduhub.v2.assignmentsvc.commonmodels.assignment.AssignmentResponse
 import com.google.protobuf.GeneratedMessageV3
 import reactor.core.publisher.Mono

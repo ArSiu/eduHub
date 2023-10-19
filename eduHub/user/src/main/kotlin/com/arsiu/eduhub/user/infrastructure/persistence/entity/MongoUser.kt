@@ -3,21 +3,11 @@ package com.arsiu.eduhub.user.infrastructure.persistence.entity
 import com.arsiu.eduhub.course.domain.Course
 import com.arsiu.eduhub.user.domain.Role
 import com.arsiu.eduhub.user.domain.Role.STUDENT
-import lombok.AllArgsConstructor
-import lombok.EqualsAndHashCode
-import lombok.Getter
-import lombok.NoArgsConstructor
-import lombok.Setter
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.DocumentReference
 
 @Document("user")
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode
-@Getter
-@Setter
 class MongoUser {
 
     @Id

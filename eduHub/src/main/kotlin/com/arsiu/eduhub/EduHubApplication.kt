@@ -8,7 +8,13 @@ import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRep
 
 @SpringBootApplication
 @EnableReactiveMongoRepositories
-@OpenAPIDefinition(info = Info(title = "APIs", version = "1.0", description = "Documentation APIs v1.0"))
+@OpenAPIDefinition(
+    info = Info(
+        title = "APIs",
+        version = "1.0",
+        description = "Documentation APIs v1.0"
+    )
+)
 class EduHubApplication
 
 @Suppress("SpreadOperator")

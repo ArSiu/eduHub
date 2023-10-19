@@ -1,9 +1,9 @@
 package com.arsiu.eduhub.assignment.application.services
 
-import com.arsiu.eduhub.assignment.application.port.AssignmentRepository
+import com.arsiu.eduhub.assignment.application.port.AssignmentPersistenceRepository
 import com.arsiu.eduhub.assignment.application.port.AssignmentService
 import com.arsiu.eduhub.assignment.domain.Assignment
-import com.arsiu.eduhub.common.application.annotation.NotifyTrigger
+import com.arsiu.eduhub.common.infrastructure.annotation.NotifyTrigger
 import com.arsiu.eduhub.common.application.exception.NotFoundException
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono
 
 @Service
 class AssignmentServiceImpl(
-    private val assignmentRepository: AssignmentRepository,
+    private val assignmentRepository: AssignmentPersistenceRepository
 ) : AssignmentService {
 
     override fun create(entity: Assignment): Mono<Assignment> {
@@ -43,8 +43,48 @@ class AssignmentServiceImpl(
     override fun delete(id: String): Mono<Void> =
         findById(id).flatMap { assignmentRepository.remove(it) }
 
+    override fun createAssignmentsForLesson(
+        lessonId: String,
+        assignments: MutableList<Assignment>
+    ): Mono<Void> {
+        return Flux.fromIterable(assignments)
+            .doOnNext { it.lessonId = lessonId }
+            .flatMap { assignment -> saveAndUpdateId(assignment) }
+            .then()
+    }
+
+    private fun saveAndUpdateId(assignment: Assignment): Mono<Assignment> {
+        return create(assignment)
+            .doOnNext { createdAssignment -> assignment.id = createdAssignment.id }
+    }
+
+    override fun deleteRemovedAssignmentsForLesson(
+        existingAssignments: List<Assignment>,
+        newAssignments: List<Assignment>
+    ): Mono<Void> =
+        Flux.fromIterable(existingAssignments)
+            .filter { existingAssignment ->
+                newAssignments.none {
+                    it.id == existingAssignment.id
+                }
+            }
+            .flatMap { delete(it.id) }
+            .then()
+
+    override fun updateAssignmentsForLesson(
+        lessonId: String,
+        assignments: List<Assignment>
+    ): Flux<Assignment> =
+        Flux.fromIterable(assignments)
+            .doOnNext { it.lessonId = lessonId }
+            .flatMap {
+                update(it)
+                    .doOnNext { updatedAssignment -> it.id = updatedAssignment.id }
+            }
+
     override fun findAssignmentsForLesson(lessonId: String): Flux<Assignment> {
         val criteria = Criteria.where("lessonId").`is`(lessonId)
         return assignmentRepository.find(Query(criteria))
     }
+
 }

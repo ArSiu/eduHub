@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 object Versions {
     const val mapstruct = "1.5.5.Final"
     const val springdoc = "2.1.0"
-    const val lombok = "1.18.28"
     const val testcontainers = "1.18.0"
     const val jupiter = "5.8.1"
     const val jnats = "2.16.14"
@@ -38,8 +37,6 @@ dependencies {
     // MapStruct & Lombok
     implementation("org.mapstruct:mapstruct:${Versions.mapstruct}")
     kapt("org.mapstruct:mapstruct-processor:${Versions.mapstruct}")
-    implementation("org.projectlombok:lombok:${Versions.lombok}")
-    kapt("org.projectlombok:lombok:${Versions.lombok}")
 
     //proto
     implementation(project(":proto"))
@@ -96,6 +93,7 @@ subprojects {
 
         // Spring Boot
         implementation("org.springframework.boot:spring-boot-starter-webflux")
+        implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
         implementation("org.springframework.boot:spring-boot-starter-validation")
         implementation("org.springframework.boot:spring-boot-starter-mail")
         implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
@@ -110,8 +108,6 @@ subprojects {
         // MapStruct & Lombok
         implementation("org.mapstruct:mapstruct:${Versions.mapstruct}")
         kapt("org.mapstruct:mapstruct-processor:${Versions.mapstruct}")
-        implementation("org.projectlombok:lombok:${Versions.lombok}")
-        kapt("org.projectlombok:lombok:${Versions.lombok}")
 
         //proto
         implementation(project(":proto"))

@@ -1,5 +1,6 @@
 package com.arsiu.eduhub.assignment.infrastructure.adapters.kafka.config
 
+import com.arsiu.eduhub.common.infrastructure.config.kafka.BaseKafkaConfig
 import com.arsiu.eduhub.v2.assignmentsvc.KafkaTopic.ASSIGNMENT_UPDATE
 import com.arsiu.eduhub.v2.assignmentsvc.commonmodels.assignment.AssignmentProto
 import io.confluent.kafka.serializers.protobuf.KafkaProtobufDeserializerConfig

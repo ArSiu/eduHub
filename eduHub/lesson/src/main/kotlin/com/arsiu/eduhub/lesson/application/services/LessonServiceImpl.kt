@@ -1,10 +1,9 @@
 package com.arsiu.eduhub.lesson.application.services
 
 import com.arsiu.eduhub.assignment.application.port.AssignmentService
-import com.arsiu.eduhub.assignment.domain.Assignment
-import com.arsiu.eduhub.common.application.annotation.NotifyTrigger
 import com.arsiu.eduhub.common.application.exception.NotFoundException
-import com.arsiu.eduhub.lesson.application.port.LessonRepository
+import com.arsiu.eduhub.common.infrastructure.annotation.NotifyTrigger
+import com.arsiu.eduhub.lesson.application.port.LessonPersistenceRepository
 import com.arsiu.eduhub.lesson.application.port.LessonService
 import com.arsiu.eduhub.lesson.domain.Lesson
 import org.springframework.data.mongodb.core.query.Criteria
@@ -15,84 +14,73 @@ import reactor.core.publisher.Mono
 
 @Service("lessonService")
 class LessonServiceImpl(
-    private val lessonRepository: LessonRepository,
+    private val lessonRepository: LessonPersistenceRepository,
     private val assignmentService: AssignmentService,
 ) : LessonService {
 
     override fun create(entity: Lesson): Mono<Lesson> {
         resetField(entity, "id")
         return lessonRepository.save(entity)
-            .flatMap { lesson -> updateAssignmentIdsAndSave(lesson) }
+            .flatMap { lesson ->
+                assignmentService.createAssignmentsForLesson(lesson.id, lesson.assignments)
+                    .then(Mono.just(lesson))
+            }
             .flatMap(lessonRepository::upsert)
     }
 
-    private fun updateAssignmentIdsAndSave(lesson: Lesson): Mono<Lesson> {
-        return Flux.fromIterable(lesson.assignments)
-            .doOnNext { it.lessonId = lesson.id }
-            .flatMap { assignment -> saveAndUpdateId(assignment) }
-            .then(Mono.just(lesson))
-    }
-
-    private fun saveAndUpdateId(assignment: Assignment): Mono<Assignment> {
-        return assignmentService.create(assignment)
-            .doOnNext { createdAssignment -> assignment.id = createdAssignment.id }
+    override fun createLessonsForChapter(
+        chapterId: String,
+        lessons: MutableList<Lesson>
+    ): Mono<Void> {
+        return Flux.fromIterable(lessons)
+            .doOnNext { it.chapterId = chapterId }
+            .flatMap { lesson ->
+                create(lesson)
+                    .doOnNext { createdLesson -> lesson.id = createdLesson.id }
+            }
+            .then()
     }
 
     override fun findAll(): Flux<Lesson> =
         lessonRepository.findAll()
-            .flatMap { lesson ->
-                assignmentService.findAssignmentsForLesson(lesson.id)
-                    .collectList()
-                    .map { assignments ->
-                        lesson.assignments = assignments.toMutableList()
-                        lesson
-                    }
-            }
+            .flatMap(this::enrichWithAssignments)
 
     override fun findById(id: String): Mono<Lesson> =
         lessonRepository.findById(id)
-            .flatMap { lesson ->
-                assignmentService.findAssignmentsForLesson(lesson.id)
-                    .collectList()
-                    .map { assignments ->
-                        lesson.assignments = assignments.toMutableList()
-                        lesson
-                    }
-            }
+            .flatMap(this::enrichWithAssignments)
             .switchIfEmpty(Mono.error(NotFoundException("Lesson with ID $id not found")))
 
+    private fun enrichWithAssignments(lesson: Lesson): Mono<Lesson> =
+        assignmentService.findAssignmentsForLesson(lesson.id)
+            .collectList()
+            .doOnNext { assignments -> lesson.assignments = assignments.toMutableList() }
+            .thenReturn(lesson)
 
     @NotifyTrigger("Lesson was updated ")
     override fun update(entity: Lesson): Mono<Lesson> =
         findById(entity.id)
             .flatMap { existingEntity ->
                 if (existingEntity != entity) {
-
-                    val deleteAssignments = Flux.fromIterable(existingEntity.assignments)
-                        .filter { existingAssignment ->
-                            entity.assignments.none { newAssignment ->
-                                existingAssignment.id == newAssignment.id
-                            }
-                        }.flatMap { assignmentService.delete(it.id) }
-
-                    val updateAssignments = Flux.fromIterable(entity.assignments)
-                        .doOnNext { it.lessonId = entity.id }
-                        .flatMap {
-                            assignmentService.update(it)
-                                .doOnNext { updatedAssignment ->
-                                    it.id = updatedAssignment.id
-                                }
-                        }
-
-                    deleteAssignments.thenMany(updateAssignments)
-                        .then(Mono.defer {
+                    assignmentService.deleteRemovedAssignmentsForLesson(
+                        existingEntity.assignments,
+                        entity.assignments
+                    )
+                        .thenMany(
+                            assignmentService.updateAssignmentsForLesson(
+                                entity.id,
+                                entity.assignments
+                            )
+                        )
+                        .collectList()
+                        .flatMap { updatedAssignments ->
+                            entity.assignments = updatedAssignments
                             lessonRepository.upsert(entity)
-                        })
+                        }
                 } else {
                     Mono.just(existingEntity)
                 }
-            }.onErrorResume(NotFoundException::class.java) { Mono.defer { create(entity) } }
-
+            }
+            .onErrorResume(NotFoundException::class.java) { create(entity) }
 
     override fun delete(id: String): Mono<Void> =
         findById(id).flatMap {
@@ -108,4 +96,20 @@ class LessonServiceImpl(
                 findById(lesson.id)
             }
     }
+
+    override fun deleteRemovedLessonsForChapter(
+        existingLessons: List<Lesson>,
+        newLessons: List<Lesson>
+    ): Mono<Void> =
+        Flux.fromIterable(existingLessons)
+            .filter { existingLesson ->
+                newLessons.none { it.id == existingLesson.id }
+            }
+            .flatMap { delete(it.id) }
+            .then()
+
+    override fun updateLessonsForChapter(chapterId: String, lessons: List<Lesson>): Flux<Lesson> =
+        Flux.fromIterable(lessons)
+            .doOnNext { it.chapterId = chapterId }
+            .flatMap { update(it).doOnNext { updatedLesson -> it.id = updatedLesson.id } }
 }

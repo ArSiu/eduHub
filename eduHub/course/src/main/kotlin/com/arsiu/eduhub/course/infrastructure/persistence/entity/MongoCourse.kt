@@ -1,6 +1,7 @@
 package com.arsiu.eduhub.course.infrastructure.persistence.entity
 
 import com.arsiu.eduhub.chapter.domain.Chapter
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.DocumentReference
@@ -19,6 +20,7 @@ class MongoCourse {
     @DocumentReference
     lateinit var chapters: MutableList<Chapter>
 
+    @get:JsonIgnore
     @DocumentReference
     lateinit var students: MutableSet<Any>
 
